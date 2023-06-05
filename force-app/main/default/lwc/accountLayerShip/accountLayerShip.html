@@ -1,0 +1,9 @@
+<template>
+<c-account-layership-g6-graph data-id="g6Graph" account-id={recordId} onaddcontact={handleAddContact} onremovecontact={handleRemoveContact}></c-account-layership-g6-graph>
+    <div if:true={showRemoveContact}>
+        <c-account-layership-remove-account account-id={clickedNodeRecordId} onsuccess={handleRemoveContactSuccess} onclose={handleCancelRemoveContact} ></c-account-layership-remove-account>
+    </div>
+    <div if:true={showAddContact}>
+        <c-account-layer-ship-add-account contact-id={recordId} clicked-node-record-id={clickedNodeRecordId} onsuccess={handleAddContactSuccess} onclose={handleCloseAddContact}></c-account-layer-ship-add-account>
+    </div>
+</template>

@@ -1,0 +1,46 @@
+<!--
+ * @Descripttion: 资源关闭审批
+ * @Author: Keiran
+ * @Date: 2021-10-20 11:00:00
+-->
+<aura:component controller="ResourceDevelopmentController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+    
+    <aura:html tag="style">
+        .slds-p-around–medium {
+            padding: 0rem !important;
+        }
+        .slds-modal__content{
+            overflow-y:hidden !important;
+            height:unset !important;
+            max-height:unset !important;
+        }
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        }
+        .c-container {
+            width: 100%;
+        }
+    </aura:html>
+
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        <h4 class="title slds-text-heading–medium">资源关闭审批</h4>
+    </div>
+    
+    <div class="slds-modal__content slds-p-around–x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative">
+        <div class="c-container" align='center'>
+            <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12" padding="around-small" class="center-align">
+                    确定提交资源关闭审批？
+            </lightning:layoutItem>
+        </lightning:layout>
+        </div>
+    </div>
+    
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        <lightning:button variant="neutral" label="取消" onclick="{!c.doCancel}"/>
+        <lightning:button variant="brand" label="保存" onclick="{!c.doSave}" />
+    </div>
+</aura:component>

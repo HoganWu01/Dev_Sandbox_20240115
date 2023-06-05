@@ -1,0 +1,75 @@
+<!--
+ * @Descripttion: 资源项目方案申请
+ * @Author: Devin
+ * @Date: 2021-09-30 13:47:05
+ * @LastEditors: Devin
+ * @LastEditTime: 2021-09-30 16:37:47
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:actionOverride,lightning:isUrlAddressable" controller="Controller_RPSA" >
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" />
+
+    <!-- 道路踏勘方案类型 -->
+    <aura:attribute name="surveyTypePick" type="List" access="PRIVATE"/>
+    <!-- 技术交流方案类型 -->
+    <aura:attribute name="technicalCommunicationTypePick" type="List" access="PRIVATE"/>
+    <!-- 项目技术方案类型 -->
+    <aura:attribute name="schemeType" type="List" access="PRIVATE"/>
+    <!-- 项目提资方案类型 -->
+    <aura:attribute name="projectInformationExtractionTypePick" type="List" access="PRIVATE"/>
+    <!-- 选项列表 -->
+    <aura:attribute name="options" type="List" access="PRIVATE"/>
+    <aura:attribute name="selectedValue" type="String" access="PRIVATE"/>
+    <aura:attribute name="parentId" type="String"/>
+    <aura:attribute name="optionValue" type="String"/>
+
+    <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">新建资源项目方案申请</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+
+                        <div><span style="color:red;">*</span>记录类型</div><br/>
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Survey_Application" change="{!c.onGroup}"/><span>设备运输道路踏勘申请</span>
+                        </div>
+                        
+                        <br/>
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r1" name="others" text="ResourceTechnicalExchange"  change="{!c.onGroup}"/><span>资源项目技术交流申请</span>
+                        </div>
+                        <br/>
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r2" name="others" text="ResourceScenarioRequest" change="{!c.onGroup}"/><span>资源项目技术方案申请</span>
+                        </div>
+                        <br/>
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r3" name="others" text="ResourceDataExtraction" change="{!c.onGroup}"/><span>资源项目提资申请</span>
+                        </div>
+
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:select aura:id="select" name="select" label="方案类型" required="true" onchange="{! c.onChange }">
+                            <aura:iteration items="{!v.options}" var="option">
+                                <option text="{!option.FieldLabel}" value="{!option.FieldValue}" />
+                            </aura:iteration>
+                        </lightning:select>
+
+
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+            </div>
+            <div class="slds-modal__footer">                
+                <lightning:button variant="neutral" label="取消" onclick="{!c.handleCancel}"/>
+                <lightning:button variant="brand" label="下一步" onclick="{!c.saveRecord}" />
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,89 @@
+<!--
+ * @Author: Keiran
+ * @Date: 2021-09-06 10:55:49 
+-->
+<template>
+    <c-slds-modal title="添加联系人" 
+        show-spinner={showSpinner} 
+        confirm-button-label="保存" 
+        confirm-button-variant="brand"
+        onconfirm={submitAddContact}  
+        onclose={closeAddContact}>
+        <span slot="content">
+            <div class="slds-align_absolute-center">
+                <lightning-radio-group class="add-contact-radio-group" 
+                    name="radioGroup" label="Radio Group"
+                    options={addContactTypeOptions}
+                    value={addContactType}
+                    type="radio" 
+                    onchange={selectContactType}
+                    variant="label-hidden"></lightning-radio-group>
+            </div>
+            <div if:true={addExistedContact}>
+                <!-- <lightning-combobox
+                    name="availableContacts"
+                    label="联系人"
+                    value={selectedContactId}
+                    options={availableContactOptions}
+                    onchange={selectExistedContact} 
+                    placeholder={availableContactOptionsPlaceholderLabel}
+                    required class="slds-var-p-horizontal_xx-small slds-var-m-bottom_x-small"></lightning-combobox> -->
+                     <div onkeyup={handleKeyUp}>
+                        <lightning-input
+                            name="enter-search"
+                            label="联系人"
+                            value={contactName}
+                            type="search"
+                            placeholder="输入联系人，回车搜索"
+                            is-loading={isLoading}
+                        ></lightning-input>
+                     </div>
+                     <template if:true={showList}>
+                        <div class="container">
+                     <template for:each={contactData} for:item="con">
+                            <div class="lineItem" key={con.Id} id={con.Id} onclick={handleSelectJobHospital}>
+                                {con.Name}
+                            </div>
+                        </template>
+                         </div>
+                    </template>
+                    <template if:true={showTip}>
+                        <div class="container">
+                            无此联系人，请新建！
+                         </div>
+                    </template>
+                <lightning-record-edit-form data-id="addExistedContactForm" 
+                        object-api-name="Contact" 
+                        record-id={contactValue}
+                        onsuccess={handleSuccessSavingAddExistedContactForm}
+                        onerror={handleErrorOnAddExistedContactForm}>
+                    <lightning-input-field data-id="existed-department-field" field-name="Department" required ></lightning-input-field>
+                    <lightning-input-field field-name="Phone">
+                        
+                    </lightning-input-field>
+                    <lightning-input-field field-name="Relationship__c">
+                        
+                    </lightning-input-field>
+                    <lightning-input-field field-name="AssociationType__c">
+                        
+                    </lightning-input-field>
+                    <lightning-input-field field-name="Parent_Contact_In_Account_Membership__c" value={parentContactId} class="slds-hide"></lightning-input-field>
+                </lightning-record-edit-form>
+            </div>
+            <div if:false={addExistedContact}>
+                <lightning-record-edit-form data-id="addNewContactForm" 
+                        object-api-name="Contact" 
+                        onsuccess={handleSuccessSavingAddNewContactForm}
+                        onerror={handleErrorOnAddNewContactForm}>
+                    <lightning-input-field field-name="Parent_Contact_In_Account_Membership__c" value={parentContactId} class="slds-hide"></lightning-input-field>
+                    <lightning-input-field field-name="Name" ></lightning-input-field>
+                    <lightning-input-field field-name="AccountId" ></lightning-input-field>
+                    <lightning-input-field field-name="Gender__c"></lightning-input-field>
+                    <lightning-input-field field-name="Department"></lightning-input-field>
+                    <lightning-input-field field-name="Relationship__c"></lightning-input-field>
+                    <lightning-input-field field-name="Phone" ></lightning-input-field>
+                </lightning-record-edit-form>
+            </div>
+        </span>
+    </c-slds-modal>
+</template>

@@ -1,0 +1,25 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-11-03 15:47:41
+ * @LastEditTime: 2021-11-03 17:48:56
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \MINGYANG\force-app\main\default\aura\SyncProjectSAP\SyncProjectSAP.cmp
+-->
+<aura:component controller="Controller_SAPProjectAdd" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name="projectId" type="String" />
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+
+<div class="container">
+    <div class="exampleHolder" aura:id="spinner">
+        <aura:if isTrue="{!v.isLoading}" >
+            <lightning:spinner style="height:320px;margin-top: 215px;" alternativeText="Loading" size="medium" />
+        </aura:if>
+    </div>
+    <div class="slds-modal__container">
+        <lightning:button variant="brand" label="项目同步SAP" title="Brand action" onclick="{! c.ProjectSAP }" class="Button" />
+    </div>
+    
+</div>
+</aura:component>

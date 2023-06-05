@@ -1,0 +1,13 @@
+<!--
+ * @Descripttion: 
+ * @Author: Devin
+ * @Date: 2021-11-01 17:04:02
+ * @LastEditors: Devin
+ * @LastEditTime: 2021-11-02 09:44:55
+-->
+<aura:component implements="lightning:isUrlAddressable,lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable,flexipage:availableForAllPageTypes" controller="Controller_ResourceProjectApplication"  access="global">
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <!-- <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" /> -->
+    
+</aura:component>

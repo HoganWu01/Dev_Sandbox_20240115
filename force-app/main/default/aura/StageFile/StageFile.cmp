@@ -1,0 +1,551 @@
+<!--
+ * @Descripttion: 
+ * @Author: Devin
+ * @Date: 2021-09-17 10:14:49
+ * @LastEditors: Devin
+ * @LastEditTime: 2021-11-03 14:12:22
+-->
+<aura:component controller="ControllerStageFile" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+    
+    <aura:attribute name="recordId" type="String" />
+
+    <!-- 单选框值 -->
+    <aura:attribute name="radioValue" type="String"/>
+    <!-- 《资源项目入库申请报告》 -->
+    <aura:attribute name="Applications" type="List"/>
+    <!-- 《风/光资源项目风险排查报告》 -->
+    <aura:attribute name="Riskreport" type="List"/>
+    <!-- 《底图》 -->
+    <aura:attribute name="Basemap" type="List"/>
+    <!-- 《项目规划方案》 -->
+    <aura:attribute name="ProjectPlanningScenarios" type="List"/>
+    <!-- 《资源开发协议》 -->
+    <aura:attribute name="ResourceDevelopmentProtocols" type="List"/>
+    <!-- 前期批复文件或支持意见 -->
+    <aura:attribute name="PreSupportOpinion" type="List"/>
+    <!-- 《项目预可研编制报告》 -->
+    <aura:attribute name="Prefeasibilitystudy" type="List"/>
+    <!-- 《项目竞配方案》 -->
+    <aura:attribute name="MatchScheme" type="List"/>
+    <!-- 《纳归批复文件》 -->
+    <aura:attribute name="GeneralApprovalDocuments" type="List"/>
+    <!-- 《政府所需编制报告》 -->
+    <aura:attribute name="GovernmentRequiredReport" type="List"/>
+    <!-- 《项目正式可研报告》 -->
+    <aura:attribute name="Feasibilitystudy" type="List"/>
+    <!-- 《核准批复文件》 -->
+    <aura:attribute name="ApprovalApprovalDocuments" type="List"/>
+    <!-- 政府批文 -->
+    <aura:attribute name="GovernmentApproval" type="List"/>
+    <!-- 《开工许可证》 -->
+    <aura:attribute name="ObtainWorkPermit" type="List"/>
+    <!-- 省级/地市资源政策文件 -->
+    <aura:attribute name="Policydocument" type="List"/>
+    <!-- 业绩文件 -->
+    <aura:attribute name="Achievement" type="List"/>
+    <!-- 项目指标申报 -->
+    <aura:attribute name="Indicatordeclaration" type="List"/>
+    <!-- 土地租赁协议 -->
+    <aura:attribute name="LandLeaseAgreement" type="List"/>
+    <!-- 项目经济性评估 -->
+    <aura:attribute name="ProjectEconomicAssessment" type="List"/>
+    <!-- 规划选址报告 -->
+    <aura:attribute name="SiteSelection" type="List"/>
+    <!-- 土地预审 -->
+    <aura:attribute name="PreTrialLand" type="List"/>
+    <!-- 取得[压矿]批复文件 -->
+    <aura:attribute name="PressOre" type="List"/>
+    <!-- 取得[地灾]批复文件 -->
+    <aura:attribute name="Disaster" type="List"/>
+    <!-- 取得[环评]批复文件 -->
+    <aura:attribute name="EIA" type="List"/>
+    <!-- 取得[地震]批复文件 -->
+    <aura:attribute name="Earthquake" type="List"/>
+    <!-- 取得[洪评]批复文件 -->
+    <aura:attribute name="FloodControlEvaluation" type="List"/>
+    <!-- 取得[节能]批复文件 -->
+    <aura:attribute name="EnergyConservation" type="List"/>
+    <!-- 取得[社稳]批复文件 -->
+    <aura:attribute name="SocialStability" type="List"/>
+    <!-- 取得[安评]批复文件 -->
+    <aura:attribute name="SecurityAssessment" type="List"/>
+    <!-- 取得[林地（草勘）]批复文件 -->
+    <aura:attribute name="WoodlandSurvey" type="List"/>
+    <!-- 取得[军事]批复文件 -->
+    <aura:attribute name="Military" type="List"/>
+    <!-- 取得[文物]批复文件 -->
+    <aura:attribute name="CulturalRelic" type="List"/>
+    <!-- 取得[接入系统]批复文件 -->
+    <aura:attribute name="AccessToSystem" type="List"/>
+
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:html tag="style">
+        .slds-p-around–medium {
+            padding: 0rem !important;
+        }
+        .slds-modal__content{
+            overflow-y:hidden !important;
+            height:unset !important;
+            max-height:unset !important;
+        }
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        }
+        .c-container {
+            width: 100%;
+        }
+        .slds-button_icon-inverse {
+            color: red !important;
+        }
+
+        .slds-p-around_small {
+            margin-top: auto;
+        }
+
+        .left-align {
+            text-align: left;
+        }
+        </aura:html>
+        
+        <div class="modal-header slds-modal__header slds-size_1-of-1">
+            
+            <aura:if isTrue="{!$Browser.isPhone}">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12" padding="around-small"  class="left-align">
+                        <lightning:button label="关闭" title="Neutral action" onclick="{! c.backhander }"/>
+                    </lightning:layoutItem>
+               </lightning:layout>
+
+                <aura:set attribute="else">
+                    <h4 class="title slds-text-heading–medium">阶段文件</h4>
+                </aura:set>
+            </aura:if>
+
+        </div>
+        
+        <div class="slds-modal__content slds-p-around–x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative">
+
+
+            <div class="c-container">
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r1" name="others" text="Riskreport" change="{!c.onGroup}"/><span>《风/光资源项目风险排查报告》</span>
+                        </div>
+                        <aura:iteration items="{!v.Riskreport}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Policydocument" change="{!c.onGroup}"/><span>省级/地市资源政策文件</span>
+                        </div>
+                        <aura:iteration items="{!v.Policydocument}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Basemap" change="{!c.onGroup}"/><span>《底图》</span>
+                        </div>
+                        <aura:iteration items="{!v.Basemap}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Application" change="{!c.onGroup}" /><span>《资源项目入库申请报告》</span>
+                        </div>
+                        <aura:iteration items="{!v.Applications}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="ResourceDevelopmentProtocols" change="{!c.onGroup}"/><span>《资源开发协议》</span>
+                        </div>
+                        <aura:iteration items="{!v.ResourceDevelopmentProtocols}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="LandLeaseAgreement" change="{!c.onGroup}"/><span>《土地租赁协议》</span>
+                        </div>
+                        <aura:iteration items="{!v.LandLeaseAgreement}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+                
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="ProjectPlanningScenarios" change="{!c.onGroup}"/><span>《项目规划方案》</span>
+                        </div>
+                        <aura:iteration items="{!v.ProjectPlanningScenarios}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="PreSupportOpinion" change="{!c.onGroup}"/><span>前期批复文件或支持意见</span>
+                        </div>
+                        <aura:iteration items="{!v.PreSupportOpinion}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="ProjectEconomicAssessment" change="{!c.onGroup}"/><span>《项目正式可研报告》</span>
+                        </div>
+                        <aura:iteration items="{!v.ProjectEconomicAssessment}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Prefeasibilitystudy" change="{!c.onGroup}"/><span>《项目预可研编制报告》</span>
+                        </div>
+                        <aura:iteration items="{!v.Prefeasibilitystudy}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="GeneralApprovalDocuments" change="{!c.onGroup}"/><span>《纳规批复文件》</span>
+                        </div>
+                        <aura:iteration items="{!v.GeneralApprovalDocuments}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="GovernmentRequiredReport" change="{!c.onGroup}"/><span>《政府所需编制报告》</span>
+                        </div>
+                        <aura:iteration items="{!v.GovernmentRequiredReport}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="SiteSelection" change="{!c.onGroup}"/><span>《规划选址报告》</span>
+                        </div>
+                        <aura:iteration items="{!v.SiteSelection}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="PreTrialLand" change="{!c.onGroup}"/><span>《土地预审》</span>
+                        </div>
+                        <aura:iteration items="{!v.PreTrialLand}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+
+                </lightning:layout>
+                
+                <lightning:layout multipleRows="true">
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="ApprovalApprovalDocuments" change="{!c.onGroup}"/><span>《核准批复文件》</span>
+                        </div>
+                        <aura:iteration items="{!v.ApprovalApprovalDocuments}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Feasibilitystudy" change="{!c.onGroup}"/><span>《项目正式可研报告》</span>
+                        </div>
+                        <aura:iteration items="{!v.Feasibilitystudy}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Indicatordeclaration" change="{!c.onGroup}"/><span>项目指标申报</span>
+                        </div>
+                        <aura:iteration items="{!v.Indicatordeclaration}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="ObtainWorkPermit" change="{!c.onGroup}"/><span>《开工许可证》</span>
+                        </div>
+                        <aura:iteration items="{!v.ObtainWorkPermit}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                                        
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="PressOre" change="{!c.onGroup}"/><span>取得[压矿]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.PressOre}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Disaster" change="{!c.onGroup}"/><span>取得[地灾]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.Disaster}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                                        
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="EIA" change="{!c.onGroup}"/><span>取得[环评]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.EIA}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Earthquake" change="{!c.onGroup}"/><span>取得[地震]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.Earthquake}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                                        
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="FloodControlEvaluation" change="{!c.onGroup}"/><span>取得[洪评]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.FloodControlEvaluation}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="EnergyConservation" change="{!c.onGroup}"/><span>取得[节能]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.EnergyConservation}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                                        
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="SocialStability" change="{!c.onGroup}"/><span>取得[社稳]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.SocialStability}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="SecurityAssessment" change="{!c.onGroup}"/><span>取得[安评]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.SecurityAssessment}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                                        
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="WoodlandSurvey" change="{!c.onGroup}"/><span>取得[林地（草勘）]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.WoodlandSurvey}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="Military" change="{!c.onGroup}"/><span>取得[军事]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.Military}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                                        
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="CulturalRelic" change="{!c.onGroup}"/><span>取得[文物]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.CulturalRelic}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <div class="left-align">
+                            <ui:inputRadio aura:id="r0" name="others" text="AccessToSystem" change="{!c.onGroup}"/><span>取得[接入系统]批复文件</span>
+                        </div>
+                        <aura:iteration items="{!v.AccessToSystem}" var="appli">
+                            <p>
+                                <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                                <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                            </p>
+                        </aura:iteration>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+
+                <hr style="height:1px;border:none;border-top:1px solid #555555;margin: auto;"/>
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:fileUpload   name="fileUploader"
+                                                multiple="true"
+                                                recordId="{!v.recordId}"
+                                                fileFieldName="Guest_Record_fileupload__c"
+                                                fileFieldValue="{!v.encryptedToken}"
+                                                onuploadfinished="{!c.handleUploadFinished}" />
+                    </lightning:layoutItem>
+
+                    <aura:if isTrue="{!$Browser.isPhone}">
+
+                        <aura:set attribute="else">
+                            <!-- <div style="margin-top: 22px;"> -->
+                                <lightning:layoutItem size="6" padding="around-small" class="left-align" >
+                                    <lightning:button label="下载" iconName="utility:download" onclick="{!c.download}"/>
+                                </lightning:layoutItem>
+                            <!-- </div> -->
+                        </aura:set>
+                    </aura:if>
+
+                </lightning:layout>
+            </div>
+        </div>
+</aura:component>

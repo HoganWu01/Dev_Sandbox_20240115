@@ -1,0 +1,94 @@
+<!--
+ * @Descripttion: 重写 【营销项目立项申请】 新建按钮
+ * @Author: Devin
+ * @Date: 2021-10-11 14:07:18
+ * @LastEditors: Devin
+ * @LastEditTime: 2021-10-13 13:22:08
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:actionOverride,lightning:isUrlAddressable" controller="Controller_Projectapplication" >
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" />
+
+    <aura:attribute name="parentId" type="String"/>
+
+    <aura:attribute name="opportunityObject" type="Object"/>
+
+    <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading--medium">新建营销项目立项申请</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="12" padding="around-small" class="left-align">
+                       <lightning:input name="province" label="项目名称" disabled="true" value="{!v.opportunityObject.name}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                       <lightning:input name="salesdepartment" label="所属大区/二级公司" disabled="true" value="{!v.opportunityObject.salesdepartment}"/>
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:input name="customerSecondaryCompany" label="客户二级公司" disabled="true" value="{!v.opportunityObject.customerSecondaryCompany}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                       <lightning:input name="marketBidDept" label="客户分部" disabled="true" value="{!v.opportunityObject.marketBidDept}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <!-- <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                       <lightning:input name="province" label="省份" disabled="true" value="{!v.opportunityObject.province}"/>
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:input name="city" label="城市" disabled="true" value="{!v.opportunityObject.city}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                       <lightning:input name="county" label="县" disabled="true" value="{!v.opportunityObject.county}"/>
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:input name="windFarmProjectName" label="风场项目名" disabled="true" value="{!v.opportunityObject.windFarmProjectName}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                       <lightning:input name="periods" label="期数" disabled="true" value="{!v.opportunityObject.periods}"/>
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:input name="capacity" label="容量（MW）" disabled="true" value="{!v.opportunityObject.capacity}"/>
+                    </lightning:layoutItem>
+                </lightning:layout> -->
+
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                       <lightning:input type="date" name="approvaltime" label="（预计）核准时间" disabled="false" value="{!v.opportunityObject.approvaltime}"/>
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:input type="date" name="estimatedBiddingTime" label="（预计）招标时间" disabled="false" value="{!v.opportunityObject.estimatedBiddingTime}"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+            </div>
+            <div class="slds-modal__footer">                
+                <lightning:button variant="neutral" label="取消" onclick="{!c.handleCancel}"/>
+                <lightning:button variant="brand" label="下一步" onclick="{!c.saveRecord}" />
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="批量修改任务" icon-name="standard:drafts">
+        <div style="height: 550px;">
+        <lightning-datatable columns={columns} key-field="Id" data={result.data} onsave={handleSave}
+            draft-values={draftValues}>
+        </lightning-datatable>
+        </div>
+    </lightning-card>
+
+
+
+    <!-- <lightning-button variant="base" label="测试" value="TEST" onclick={handleTest}></lightning-button> -->
+    
+</template>

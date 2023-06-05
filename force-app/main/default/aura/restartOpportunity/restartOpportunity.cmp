@@ -1,0 +1,73 @@
+<!--
+ * @Descripttion: 
+ * @Author: Devin
+ * @Date: 2021-12-28 15:47:50
+ * @LastEditors: Devin
+ * @LastEditTime: 2021-12-29 14:46:58
+-->
+<aura:component controller="Controller_RestartOpportunity" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+    
+    <aura:attribute name="showContent" type="Boolean" default="true"/>
+    <aura:html tag="style">
+        .slds-p-around–medium {
+            padding: 0rem !important;
+        }
+        .slds-modal__content{
+            overflow-y:hidden !important;
+            height:unset !important;
+            max-height:unset !important;
+        }
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        }
+        .c-container {
+            width: 100%;
+        }
+
+        .forceAccess .footer {
+            text-align: right;
+        }
+
+        .header {
+            font-weight: var(--sds-c-card-heading-font-weight, var(--lwc-cardFontWeight,700));
+            font-size: var(--lwc-fontSize5,1rem);
+        }
+    </aura:html>
+
+    <div class="header slds-size_1-of-1">
+        <h4 class="title slds-text-heading–medium">重启商机</h4>
+    </div>
+    
+    <div class="slds-modal__content slds-p-around–x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative">
+        <div class="c-container" style="text-align: left;" align='center'>
+            <lightning:layout multipleRows="true">
+                <aura:if isTrue="{! v.showContent }">
+                    <lightning:layoutItem size="12" padding="around-small" >
+                            确定重启商机?
+                    </lightning:layoutItem>
+
+                    <aura:set attribute="else">
+                        <lightning:layoutItem size="12" padding="around-small" >
+                            重启成功!
+                    </lightning:layoutItem>
+                    </aura:set>
+
+                </aura:if>
+        </lightning:layout>
+        </div>
+    </div>
+
+    <hr style="height:1px;border:none;border-top:1px solid #555555;margin: auto;"/>
+    
+    <div class="footer slds-size_1-of-1">
+        <aura:if isTrue="{! v.showContent }">
+        <lightning:button variant="brand" label="重启" onclick="{!c.doRestart}" />
+        <aura:set attribute="else">
+            <lightning:button variant="brand" label="完成" onclick="{!c.doFinish}" />
+        </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

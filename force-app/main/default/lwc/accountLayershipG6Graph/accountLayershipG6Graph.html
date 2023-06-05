@@ -1,0 +1,11 @@
+<template>
+<div style="overflow: auto;" data-id="mountNode" class="mountNode"></div>
+    <div class="container">
+        <div data-id="actions" class="action-wrap"
+            onmouseover={overAction}
+            onmouseout={outAction}>
+            <button class="action-btn" onclick={add}>添加</button>
+            <button  class="action-btn" onclick={remove} >删除</button>
+        </div>
+    </div>
+</template>

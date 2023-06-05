@@ -1,0 +1,57 @@
+<!--
+ * @Author: irving
+ * @Date: 2021-10-17 15:27:02
+ * @LastEditTime: 2021-10-20 17:12:34
+ * @LastEditors: Devin
+ * @Description: In User Settings Edit
+ * @FilePath: \MINGYANG\force-app\main\default\aura\UpdateTaskDate\UpdateTaskDate.cmp
+-->
+<aura:component controller="Controller_UpdateTaskDate" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:actionOverride,lightning:isUrlAddressable">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" />
+    <aura:attribute name="parentId" type="String"/>
+    <aura:attribute name="payDate" type="Date" />
+    <aura:attribute name="taskId" type="String" />
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+
+    <aura:handler name="sampleComponentEvent" event="c:compEvent" action="{!c.handleComponentEvent}"/>
+
+
+    <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+        <!-- 遮罩层 -->
+        <div class="exampleHolder">
+            <aura:if isTrue="{! v.loaded }">
+                <lightning:spinner alternativeText="Loading" />
+            </aura:if>
+        </div>
+
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <h2 class="slds-text-heading--medium">刷新时间</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium" align="center">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <!-- 引入子组件 -->
+                        <c:CustomLookup objectName="ProjectTask__c" fieldName="Name" parentId="{!v.parentId}" label="*项目任务" iconName="standard:account" placeholder="选择项目任务" />
+                    </lightning:layoutItem>
+                    
+                    <lightning:layoutItem size="6" padding="around-small" class="left-align">
+                        <lightning:input name="payDate" type="Date" value="{!v.payDate}" label="*标准计划开始日期" placeholder="选择标准计划开始时间"/>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+            </div>
+
+            <div class="slds-modal__footer">                
+                <lightning:button variant="neutral" label="取消" onclick="{!c.handleCancel}"/>
+                <lightning:button variant="brand" label="刷新" onclick="{!c.updateTaskDate}" />
+            </div>
+
+        </div>
+    </div>
+
+   
+
+</aura:component>

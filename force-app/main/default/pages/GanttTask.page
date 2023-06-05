@@ -1,0 +1,264 @@
+<apex:page standardController="Project__c" >
+
+    <!-- <script src="https://cdn.bootcss.com/echarts/4.0.2/echarts-en.common.js"></script> -->
+    <script src="{!URLFOR($Resource.echarts_en_common_js)}"></script>
+    <script type="text/javascript">
+        var __sfdcSessionId = '{!GETSESSIONID()}';
+    </script>
+
+    <script src="../../soap/ajax/46.0/connection.js" type="text/javascript"></script>
+
+
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 800px;height:400px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        //var myChart = echarts.init(document.getElementById('main'));
+        var worldMapContainer = document.getElementById('main');
+        
+        //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
+        var resizeWorldMapContainer = function () {
+            worldMapContainer.style.width = window.innerWidth + 'px';
+            worldMapContainer.style.height = window.innerHeight + 'px';
+        };
+ 
+        //设置容器高宽
+        resizeWorldMapContainer();
+        
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(worldMapContainer);
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '风机交付甘特图',
+                left: 10
+            },
+            legend: {
+                y: 'top',
+                data: ['计划日期', '实际日期']  //修改的地方1
+            },
+            grid: {
+                containLabel: true,
+                left: 20
+            },
+            xAxis: {
+                type: 'time'
+            },
+
+            yAxis: {
+
+                // data: ['吊装与预验收', '制造与交付', '生产准备', '合同商务']
+                data:[]
+
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function(params) {
+                    var res = params[0].name + "</br>"
+                    var date0 = params[0].data;
+                    var date1 = params[1].data;
+                    var date2 = params[2].data;
+                    var date3 = params[3].data;
+                    date0 = date0.getFullYear() + "-" + (date0.getMonth() + 1) + "-" + date0.getDate();
+                    date1 = date1.getFullYear() + "-" + (date1.getMonth() + 1) + "-" + date1.getDate();
+                    date2 = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate();
+                    date3 = date3.getFullYear() + "-" + (date3.getMonth() + 1) + "-" + date3.getDate();
+                    res += params[0].seriesName + "~" + params[1].seriesName + ":</br>" + date0 + "~" + date1 + "</br>";
+                    res += params[2].seriesName + "~" + params[3].seriesName + ":</br>" + date2 + "~" + date3 + "</br>";
+                    // console.log(params[0]);
+                    return res;
+                }
+            },
+            series: [
+                {
+                    name: '计划开始日期',
+                    type: 'bar',
+                    stack: 'test1',
+                    itemStyle: {
+                        normal: {
+                            color: 'rgba(0,0,0,0)'
+                        }
+                    },
+                    data: [
+                        // new Date("2019/6/21"),
+                        // new Date("2019/5/28"),
+                        // new Date("2019/4/17"),
+                        // new Date("2019/2/2")
+                    ]
+                },
+                {
+                    name: '计划结束日期',
+                    type: 'bar',
+                    stack: 'test1',
+                    //修改地方2
+                    itemStyle: {
+                        normal: {
+                            color: '#F98563'
+                        }
+                    },
+                    data: [
+                        // new Date("2019/9/19"),
+                        // new Date("2019/7/20"),
+                        // new Date("2019/5/27"),
+                        // new Date("2019/4/16")
+                    ]
+                },
+                {
+                    name: '实际开始日期',
+                    type: 'bar',
+                    stack: 'test2',
+                    itemStyle: {
+                        normal: {
+                            color: 'rgba(0,0,0,0)'
+                        }
+                    },
+                    data: [
+                        // new Date("2019/6/22"),
+                        // new Date("2019/5/28"),
+                        // new Date("2019/4/16"),
+                        // new Date("2019/2/5")
+                    ]
+                },
+                {
+                    name: '实际结束日期',
+                    type: 'bar',
+                    stack: 'test2',
+                    //修改地方3
+                    itemStyle: {
+                        normal: {
+                            color: '#A2E068'
+                        }
+                    },
+                    data: [
+                        // new Date("2019/8/25"),
+                        // new Date("2019/7/21"),
+                        // new Date("2019/5/25"),
+                        // new Date("2019/4/15")
+                    ]
+                },
+                {
+                    name: '计划日期',
+                    type: 'bar',
+                    stack: 'test1',
+                    itemStyle: {
+                        normal: {
+                            color: '#F98563'
+                        }
+                    },
+                    data:[]
+                },
+                {
+                    name: '实际日期',
+                    type: 'bar',
+                    stack: 'test2',
+                    itemStyle: {
+                        normal: {
+                            color: '#A2E068'
+                        }
+                    },
+                    data:[]
+                }
+            ]
+        };
+
+        window.onload = setupPage;
+        function setupPage() {
+            //function contains all code to execute after page is rendered
+            var state = {
+                //state that you need when the callback is called
+                output : document.getElementById("main"),
+                startTime : new Date().getTime()
+            };
+
+            var callback = {
+                //call layoutResult if the request is successful
+                onSuccess: layoutResults,
+                //call queryFailed if the api request fails
+                onFailure: queryFailed,
+                source: state
+            };
+
+            soql_str = "SELECT SubType__c, MIN(PlannedStartDate__c) PlannedStartDate, MAX(PlannedEndDate__c) PlannedEndDate, MIN(ActualStartDate__c) ActualStartDate, MAX(ActualEndDate__c) ActualEndDate FROM ProjectTask__c WHERE Project__c =  " + "\'" + '{!Project__c.Id}' + "\'" + " AND SubType__c != Null Group By SubType__c ORDER BY MAX(Number__c)";
+            // console.log(soql_str)
+
+            sforce.connection.query(soql_str, callback);
+        }
+
+        function queryFailed(error, source) {
+            source.output.innerHTML = "An error has occurred: " + error;
+        }
+
+        function layoutResults(queryResult, source) {
+            if (queryResult.size > 0) {
+                // var output = "";
+                //get the records array
+                var records = queryResult.getArray('records');
+
+                //loop through the records and construct html string
+                for (var i = records.length - 1; i >= 0; i--) {
+                    // console.log(i);
+                    var project_stage = records[i];
+                    //option['yAxis']['data'].push(project_stage.SubType__c.slice(1));
+                    option['yAxis']['data'].push(project_stage.SubType__c.replace(/[0-9\s]/ig,""));
+                    for(var j = 0; j < option['series'].length; j++ ){
+                        if (option['series'][j]['name'] == '计划开始日期'){
+                            if (project_stage.PlannedStartDate == null){
+                                option['series'][j]['data'].push(new Date('2019-01-01'));
+                            }
+                            else{
+                                option['series'][j]['data'].push(new Date(project_stage.PlannedStartDate));
+                            }
+                        }
+                        else if (option['series'][j]['name'] == '计划结束日期'){
+                            if (project_stage.PlannedEndDate== null){
+                                option['series'][j]['data'].push(new Date('2019-01-01'));
+                            }
+                            else{
+                                option['series'][j]['data'].push(new Date(project_stage.PlannedEndDate));
+                            }
+                        }
+                        else if (option['series'][j]['name'] == '实际开始日期'){
+                            if (project_stage.ActualStartDate == null){
+                                if (project_stage.PlannedStartDate == null){
+                                    option['series'][j]['data'].push(new Date('2019-01-01'));
+                                }
+                                else{
+                                    option['series'][j]['data'].push(new Date(project_stage.PlannedStartDate));
+                                }
+                            }
+                            else{
+                                option['series'][j]['data'].push(new Date(project_stage.ActualStartDate));
+                            }
+                        }
+                        else if (option['series'][j]['name'] == '实际结束日期'){
+                            if(project_stage.ActualEndDate == null){
+                                if (project_stage.PlannedStartDate == null){
+                                    option['series'][j]['data'].push(new Date('2019-01-01'));
+                                }
+                                else{
+                                    option['series'][j]['data'].push(new Date(project_stage.PlannedStartDate));
+                                }
+                            }
+                            else {
+                                option['series'][j]['data'].push(new Date(project_stage.ActualEndDate));
+                            }
+                        }
+                    }
+                }
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+                
+                //用于使chart自适应高度和宽度
+                window.onresize = function () {
+                    //重置容器高宽
+                    resizeWorldMapContainer();
+                    myChart.resize();
+                };
+            }
+        }
+    </script>
+
+
+</apex:page>

@@ -1,0 +1,53 @@
+<!--
+ * @Author: Hogan
+ * @Date: 2023-04-24 16:00:00
+ * @LastEditTime: 2023-04-24 16:00:00
+ * @LastEditors: Hogan
+ * @Description: In User Settings Edit
+ * @FilePath: \mingyang\force-app\main\default\aura\Extension_submit\Extension_submit.cmp
+-->
+<aura:component controller="ControllerMattersSubmit" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+   <!-- attributes -->
+   <aura:attribute name="planCompletionDateTemp" type="Date"/>
+   <aura:attribute name="extensionReasonTemp" type="String"/>
+   <aura:attribute name="isButtonActive" type="Boolean" default="false" />
+   <!-- handlers-->
+   <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:html tag="style" >
+        .slds-modal__container{
+            width: 50% !important;
+            max-width: 50% !important;
+        }
+        <!-- .slds-textarea{
+            height: 120px;
+        } -->
+
+        .slds-modal__content{
+            height: auto !important;
+        }
+
+        .font-textarea{
+            color: red;            
+        }
+
+    </aura:html>
+    <h1 class="header" align='center'>延期审批</h1>
+    <div class="exampleHolder" aura:id="spinner">
+        <aura:if isTrue="{!v.isLoading}" >
+            <lightning:spinner style="height:320px;margin-top: 215px;" alternativeText="Loading" size="medium" />
+        </aura:if>
+    </div>
+
+    <div class="row">
+        <lightning:input aura:id="tipApp"  type="date" name="planCompletionDateTemp" label="计划完成日期" value="{!v.planCompletionDateTemp}"/>
+    </div>
+    <div class="row">
+        <lightning:textarea  aura:id="tipApp2" name="extensionReasonTemp" value="{!v.extensionReasonTemp}" label="延期原因" placeholder="请填写..."/>
+    </div>
+    <br/>
+    <!-- 确定 取消 -->
+    <div align="right" style="margin-top: 1%; margin-bottom: 1%">
+        <lightning:button variant="brand-outline" label="取消"  onclick="{! c.doCancel }" />
+        <lightning:button disabled= "{!v.isButtonActive}" class="uiButton--brand uiButton" variant="success" label="提交待审批" title="Success" onclick="{! c.doSave }"/>
+    </div>
+</aura:component>

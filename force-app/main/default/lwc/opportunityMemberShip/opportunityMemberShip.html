@@ -1,0 +1,9 @@
+<template>
+    <c-opportunity-member-ship-g6-graph data-id="g6Graph" account-id={recordId} onaddcontact={handleAddContact} onremovecontact={handleRemoveContact}></c-opportunity-member-ship-g6-graph>
+    <div if:true={showRemoveContact}>
+        <c-opportunity-membership-remove-contact contact-id={clickedNodeRecordId} onsuccess={handleRemoveContactSuccess} onclose={handleCancelRemoveContact} ></c-opportunity-membership-remove-contact>
+    </div>
+    <div if:true={showAddContact}>
+        <c-opportunity-membership-add-contact account-id={recordId} clicked-node-record-id={clickedNodeRecordId} onsuccess={handleAddContactSuccess} onclose={handleCloseAddContact}></c-opportunity-membership-add-contact>
+    </div>
+</template>

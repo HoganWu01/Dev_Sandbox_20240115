@@ -1,0 +1,289 @@
+<apex:page docType="html-5.0"  lightningStyleSheets="true"  standardController="Resource_Development__c"  recordSetVar="Resource_Development__cs" extensions="BatchRTC" standardStylesheets="false" sidebar="false" applyBodyTag="false"  >
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+    <script src="/soap/ajax/38.0/connection.js" type="text/javascript"/>
+    <script src="/soap/ajax/38.0/apex.js" type="text/javascript"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.elementUI,'css/element.css')}" />
+    <script src="{!URLFOR($Resource.elementUI,'js/vue.js')}"></script>
+    <script src="{!URLFOR($Resource.elementUI,'js/element.js')}"></script>
+    <script src="{!URLFOR($Resource.element,'js/shim.min.js')}"></script>
+
+    <input Id="selectId" value="{!Selected}" style="display:none;" />
+
+    <style type="text/css">
+        .invoiceDiv{
+            width:100%;
+            margin:0 auto;
+            text-align:center;
+            font-size:18px;
+            font-weight:bold;
+        }
+    
+    
+    </style>
+
+<div id="tipText" class="invoiceDiv">
+
+</div>
+
+<div style="float:clear;">
+
+</div>
+
+<div id="app" v-cloak="true">
+
+<!-- <apex:pageBlock title="预览资源" >
+    
+    <apex:pageBlockTable value={!tempList} var="resource">
+         <apex:column value="{!resource.ResourceName}"/>
+         <apex:column value="{!resource.customerProvince}"/>
+         <apex:column value="{!resource.customerArea}"/>
+         <apex:column value="{!resource.customerprovinceOwnerName}"/>
+     </apex:pageBlockTable>
+    <apex:pageBlockTable value="{!selected}" var="resource">
+         <apex:column value="{!resource.Name}"/>
+         <apex:column value="{!resource.Province__c}"/>
+         <apex:column value="{!resource.SalesDepartment__c}"/>
+          <apex:column value="{!resource.LeadOwner__c}"/>
+     </apex:pageBlockTable>
+</apex:pageBlock> -->
+
+<div><h2>资源转订单</h2></div>
+
+<el-table ref="multipleTable"  isdata="tempList" isborder='true' style="width: 100%" >
+    <!-- <el-table-column
+    type="selection"
+    width="55"
+    >
+  </el-table-column> -->
+    <el-table-column prop="Name" label="资源名称" width="550%" align="center">
+      <template slot-scope="scope">{{ scope.row.ResourceName }}</template>
+    </el-table-column>
+    <el-table-column prop="province" label="省份" width="200%" align="center" >
+        <template slot-scope="scope">{{ scope.row.customerProvince }}</template>
+      </el-table-column>
+      <el-table-column prop="area" label="区域" width="180%"  align="center">
+        <template slot-scope="scope">{{ scope.row.customerArea }}</template>
+      </el-table-column>
+      <el-table-column prop="owner" label="负责人" width="200%" align="center" >
+        <template slot-scope="scope">{{ scope.row.customerprovinceOwnerName }}</template>
+      </el-table-column>
+      <el-table-column prop="group" label="项目所属集团名称" width="220%"  align="center">
+        <template slot-scope="scope">{{ scope.row.GroupName }}</template>
+      </el-table-column>
+
+      <!-- <el-table-column label="项目所属集团名称">
+        <template slot-scope="scope">
+          <el-col id='col'>
+          <el-autocomplete   v-model='scope.row.groupData'   isfetch-suggestions="querySearch" v-onisselect="handleSelect" 
+          placeholder="查找项目所属集团"  v-oniskeyup.enter.native="searchData(scope.$index)"
+            >
+          <i
+          class="el-icon-edit el-input__icon"
+            slot="suffix"
+            >
+           </i>
+          </el-autocomplete>
+        </el-col>
+        </template>
+      </el-table-column> -->
+
+      <!-- <el-table-column label="项目所属集团名称">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.GroupName"   placeholder="请选择" >
+            <el-option >
+            </el-option>
+          </el-select>
+        </template>
+      </el-table-column> -->
+      
+  </el-table>
+
+  <!-- <el-col isspan="3" isoffset="1">
+    <el-button type="primary" v-onisclick="test" >testShow</el-button>
+  </el-col> -->
+
+<div style="margin-top:10px;">
+    <button class="slds-button slds-button_brand" style="margin-left:45%;display:inline-block;" onclick="cancel()" >取消</button>
+    <button id="yes" class="slds-button slds-button_brand" onclick="converse()" style="margin-left:10px;display:inline-block;">确认</button>
+</div>
+
+
+
+</div>
+
+</html>
+
+
+<script type="text/javascript">
+
+    const vm = new Vue({
+        el: "#app",
+        data: {
+            tempList:[],
+            groupData:'',
+            autoimputContent:[],
+        },
+
+        mounted(){
+            this.iinit();
+          },
+
+        methods:{
+
+          // handleSelect(item) {
+           
+          //   },
+
+          // searchData(cutindex){
+          //   console.log('index',cutindex);
+
+          //      const that = this
+          //      BatchRTC.searchGroupData(that.tempList[cutindex].groupData,(res, event)=>{
+          //         vm.getData(res, event, data => {
+          //           that.loading=false
+                   
+          //           //that.tempList[cutindex].groupData=data.data.entites ; 
+          //           that.autoimputContent = data.data.entites ;  // [{"value":"111"},{"value":"222"}]
+
+          //           console.log('that.autoimputContent[0].value',that.autoimputContent[0].value);
+          //         })
+          //       })
+          //   },
+
+            iinit(){
+
+                const that = this
+                var RListStr = document.getElementById("selectId").value;
+
+                console.log('RListStr==='+RListStr);
+            
+                BatchRTC.showData(RListStr,(res, event)=>{
+                  vm.getData(res, event, data => {
+                    that.loading=false
+                    that.tempList= data.data.entites ; 
+                  })
+                })
+              
+            },
+
+            // querySearch(queryString, cb) {
+            //   var autoimputContent = this.autoimputContent;
+            //   var results = queryString ? autoimputContent.filter(this.createFilter(queryString)) : autoimputContent;
+            //   // 调用 callback 返回建议列表的数据
+            //   cb(results);
+            // },
+    
+            // createFilter(queryString) {
+            //   return (autoimputContent) => {
+            //     return (autoimputContent.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+            //   };
+            // },
+
+            getData(result, event, callback) {
+              
+              if (event.status) {
+                var rep = "&" + "quot" + ";";
+                var data = eval("(" + result.replace(new RegExp(rep, "gm"), '\"') + ")");
+                console.log(data, '处理数据 data')
+                if (data.type == 'S') {
+                  callback(data);
+                } else {
+                  this.loading=false
+                  if (vm.$alert) {
+                    vm.$alert(data.msg, '错误提示', {
+                      confirmButtonText: '确定'
+                    });
+                  } else {
+                    alert(JSON.stringify(data))
+                  }
+                }
+              } else {
+                this.loading=false
+                if (vm.$alert) {
+                  vm.$alert('系统有点问题,请稍后重试', '错误提示', {
+                    confirmButtonText: '确定'
+                  });
+                } else {
+                  alert('系统有点问题,请稍后重试')
+                }
+              }
+            },
+
+            // test(){
+            //   console.log('---',this.tempList[0].groupData);
+            // },
+
+
+        }
+    })
+
+
+    window.onload=function(){
+         var RListStr = document.getElementById("selectId").value;
+
+         console.log('window.onload=function===RListStr'+RListStr);
+        if(RListStr =='' || RListStr == null || RListStr == undefined){
+            alert('请先勾选资源再操作');
+            window.location.href = '/lightning/o/Resource_Development__c/list?filterName=00Bp00000027CgcEAE';
+            return;
+        }
+
+        // Visualforce.remoting.Manager.invokeAction(
+        //     '{!$RemoteAction.BatchRTC.showData}',
+        //     RListStr,
+        //     function(result,event){
+        //         if(event.status){//如果方法执行成功
+        //         console.log('result==='+result);
+        //        // this.tempList = result.data ; 
+
+        //         }else if(event.type ==='exception'){//方法执行失败
+        //         }else{
+        //         }
+        //     },
+        //     {escape: true}
+        // );
+
+    }
+    //
+    function converse(){
+         var RListStr = document.getElementById("selectId").value;
+         
+        if(RListStr == null || RListStr == undefined){
+            alert('请先勾选资源再操作');
+            return ;
+        }
+
+        //设置按钮不可用
+        document.getElementById("yes").setAttribute("disabled", true);
+        
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.BatchRTC.BRTC}',
+            RListStr,
+            function(result,event){
+                if(event.status){//如果方法执行成功
+                    //
+                    //alert(result);
+                    alert('批量转换成功');
+                    cancel();
+                }else if(event.type ==='exception'){//方法执行失败
+                    alert(event.message);
+                    cancel();
+                }else{
+                    cancel();
+                }
+            },
+            {escape: true}
+        );
+    }
+
+    //取消按钮事件
+    function cancel(){
+        window.location.href = '/lightning/o/Resource_Development__c/list?filterName=00Bp00000027CgcEAE';
+    }
+
+
+</script>
+
+
+
+</apex:page>

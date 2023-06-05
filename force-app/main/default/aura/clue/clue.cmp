@@ -1,0 +1,51 @@
+<!--
+ * @Author: Aug
+ * @Date: 2021-09-02 15:11:37
+ * @LastEditTime: 2021-10-29 09:54:48
+ * @LastEditors: Devin
+ * @Description: 线索提交审批的按钮
+ * @FilePath: \mingyang\force-app\main\default\aura\clue\clue.cmp
+-->
+<aura:component controller="Controller_Thread" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+   <!-- attributes -->
+   <aura:attribute name="clueComment" type="String"/>
+   <aura:attribute name="approveComment" type="String"/>
+   <aura:attribute name="isButtonActive" type="Boolean" default="false" />
+   <aura:attribute name="isShowTip" type="Boolean" default="false" />
+   <!-- handlers-->
+   <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+
+   <aura:html tag="style" >
+
+       .slds-modal__container{
+          width: 50% !important;
+          max-width: 50% !important;
+          
+       }
+
+       .slds-textarea{
+           height: 120px;
+       }
+
+       .slds-modal__content{
+           height: auto !important;
+       }
+
+   </aura:html>
+   <h2 class="header" align='center'>线索申报</h2>
+
+    <aura:if isTrue="{! v.isShowTip }">
+        <div class="row" style="color:red">
+            <lightning:textarea id="appcomment" value="{!v.clueComment}" label="错误：" />
+        </div>
+    </aura:if>
+    <div class="row">
+        <lightning:textarea id="appcomment" value="{!v.approveComment}" label="备注" placeholder="审批备注..."/>
+    </div>
+   <!-- 确定 取消 -->
+   <div align="right" style="margin-top: 1%; margin-bottom: 1%">
+       <lightning:button variant="brand-outline" label="取消"  onclick="{! c.doCancel }" />
+       <lightning:button disabled= "{!v.isButtonActive}" class="uiButton--brand uiButton" variant="success" label="提交审批" title="Success" onclick="{! c.doSave }"/>
+   </div>
+
+</aura:component>

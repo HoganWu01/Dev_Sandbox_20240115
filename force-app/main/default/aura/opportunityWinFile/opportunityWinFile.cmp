@@ -1,0 +1,107 @@
+<!--
+ * @Descripttion: 
+ * @Author: Devin
+ * @Date: 2021-12-28 11:06:05
+ * @LastEditors: Devin
+ * @LastEditTime: 2021-12-28 11:55:13
+-->
+<aura:component controller="ControllerOpportunityStageFile" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+
+    <aura:attribute name="recordId" type="String" />
+
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+
+    <!-- 单选框值 -->
+    <aura:attribute name="radioValue" type="String"/>
+    <!-- 上传中标通知书/相关证明 -->
+    <aura:attribute name="WinFile" type="List"/>
+
+    <aura:html tag="style">
+        .slds-p-around–medium {
+            padding: 0rem !important;
+        }
+        .slds-modal__content{
+            overflow-y:hidden !important;
+            height:unset !important;
+            max-height:unset !important;
+        }
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        }
+        .c-container {
+            width: 100%;
+        }
+        .slds-button_icon-inverse {
+            color: red !important;
+        }
+
+        .slds-p-around_small {
+            margin-top: auto;
+        }
+
+        .left-align {
+            text-align: left;
+        }
+
+        .center-align {
+            text-align: center;
+        }
+    </aura:html>
+
+    <!-- 头部 -->
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+            
+        <aura:if isTrue="{!$Browser.isPhone}">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" padding="around-small"  class="left-align">
+                    <lightning:button label="关闭" title="Neutral action" onclick="{! c.backhander }"/>
+                </lightning:layoutItem>
+           </lightning:layout>
+
+            <aura:set attribute="else">
+                <h4 class="title slds-text-heading–medium">上传中标通知书/相关证明</h4>
+            </aura:set>
+        </aura:if>
+
+    </div>
+
+    <!-- body -->
+    <div class="slds-modal__content slds-p-around–x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative">
+        <div class="c-container">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" padding="around-small" class="left-align">
+                    <div class="left-align">
+                        <ui:inputRadio aura:id="r1" name="others" text="WinFile" change="{!c.onGroup}"/><span>上传中标通知书/相关证明</span>
+                    </div>
+                    <aura:iteration items="{!v.WinFile}" var="appli">
+                        <p>
+                            <a class="slds-resizable forceContentCompoundFieldsTitleRenderer" data-aura-class="forceContentCompoundFieldsTitleRenderer" href="{!appli.documenLink}" target="_blank">{!appli.documentName}</a>
+                            <lightning:buttonIcon iconName="utility:close" value="{!appli.documentId}"  variant="bare-inverse" title="删除" onclick="{! c.handleClick }" alternativeText="Close window"/>
+                        </p>
+                    </aura:iteration>
+                </lightning:layoutItem>
+            </lightning:layout>
+
+            <hr style="height:1px;border:none;border-top:1px solid #555555;margin: auto;"/>
+
+            <!-- 上传文件 -->
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" padding="around-small" class="center-align">
+                    <lightning:fileUpload   name="fileUploader"
+                                            multiple="true"
+                                            recordId="{!v.recordId}"
+                                            fileFieldName="Guest_Record_fileupload__c"
+                                            fileFieldValue="{!v.encryptedToken}"
+                                            onuploadfinished="{!c.handleUploadFinished}" />
+                </lightning:layoutItem>
+
+                <!-- <lightning:layoutItem size="6" padding="around-small" class="left-align" >
+                    <lightning:button label="下载" iconName="utility:download" onclick="{!c.download}"/>
+                </lightning:layoutItem> -->
+            </lightning:layout>
+        </div>
+    </div>
+</aura:component>

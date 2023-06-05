@@ -1,0 +1,10 @@
+<template>
+    <c-slds-modal title="删除提示" 
+        show-spinner={showSpinner} 
+        confirm-button-label="确定" 
+        confirm-button-variant="destructive"
+        onconfirm={handleRemoveContact}  
+        onclose={handleCancelRemove}>
+        <span slot="content">{showConfirmMessage}</span>
+    </c-slds-modal>
+</template>

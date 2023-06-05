@@ -1,0 +1,12 @@
+<template>
+    <div style="overflow: auto;" data-id="mountNode" class="mountNode"> <!-- lwc:dom="manual"-->
+        <div class="container">
+            <div data-id="actions" class="action-wrap"
+                onmouseover={overAction}
+                onmouseout={outAction}>
+                <button class="action-btn" onclick={add}>添加</button>
+                <button if:true={showRemoveButton} class="action-btn" onclick={remove} >删除</button>
+            </div>
+        </div>
+    </div>
+</template>

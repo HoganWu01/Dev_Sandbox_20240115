@@ -1,0 +1,55 @@
+<!--
+ * @Author: irving
+ * @Date: 2021-10-16 18:41:33
+ * @LastEditTime: 2021-10-29 09:54:05
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \MINGYANG\force-app\main\default\aura\CreateProjectTask\CreateProjectTask.cmp
+-->
+<aura:component controller="Controller_ImportProjectTask" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.reInit}" />
+    <aura:attribute name="parentId" type="String"/>
+    <!-- 选项列表 -->
+    <aura:attribute name="options" type="List" access="PRIVATE"/>
+    <aura:attribute name="optionValue" type="String"/>
+
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+
+    <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+        <!-- 遮罩层 -->
+        <div class="exampleHolder">
+            <aura:if isTrue="{! v.loaded }">
+                <lightning:spinner alternativeText="Loading" />
+            </aura:if>
+        </div>
+
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <h2 class="slds-text-heading--medium">项目任务</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium" align="center">
+                <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="6" padding="around-small" class="center-align">
+                    <div class="div1" >
+                        <lightning:select aura:id="select" name="select" label="任务类型" required="true"  onchange="{!c.onchange}" >
+                            <aura:iteration items="{!v.options}" var="option">
+                                <option text="{!option.FieldLabel}" value="{!option.FieldValue}" />
+                            </aura:iteration>
+                            <!-- <option value="陆上">陆上</option>
+                            <option value="海上">海上</option>
+                            <option value="国际">国际</option> -->
+                        </lightning:select>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+            </div>
+
+            <div class="slds-modal__footer">                
+                <lightning:button variant="neutral" label="取消" onclick="{!c.handleCancel}"/>
+                <lightning:button variant="brand" label="拉取" onclick="{!c.PullTask}" />
+            </div>
+
+        </div>
+    </div>
+</aura:component>

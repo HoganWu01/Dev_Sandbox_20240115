@@ -1,0 +1,29 @@
+[data-id="mountNode"] {
+    text-align: left;
+}
+
+.mountNode {
+    position: relative;
+}
+[data-id="mountNode"] canvas {
+    vertical-align: top;
+}
+.action-wrap {
+    display: none;
+    position: absolute;
+    font-family: 'Arial Normal', 'Arial', sans-serif;
+    color: #333;
+}
+.action-wrap .action-btn {
+    display: block;
+    width: 68px;
+    height: 26px;
+    font-size: 13px;
+    border: 1px solid #0E63B2;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+}
+.action-wrap .action-btn + .action-btn {
+    border-top-width: 0;
+}
