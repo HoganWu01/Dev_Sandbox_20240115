@@ -25,6 +25,26 @@ public with sharing class Test_MarketingProjectInitiation {
         acc.name = 'acc';
         insert acc ; 
 
+        //简档数据
+        Profile manageprofile = [SELECT Id FROM Profile WHERE Name='O项目经理'];
+
+        //用户数据
+        User user1 = new User(Alias = '格日图', Email='standarduser@testorg.com',EmailEncodingKey='UTF-8', LastName='Test110', LanguageLocaleKey='en_US', LocaleSidKey='en_US', ProfileId = manageprofile.Id,  TimeZoneSidKey='America/Los_Angeles', UserName='standarduser@test1110.com');
+        insert user1;
+
+        //员工数据
+        Employee__c emp = new Employee__c(Job_Number__c = '123456', name = 'aaa', Duty__c = '顾问', Department__c = '小卖部', Department_Number__c = '111', Status__c = '在职');
+        insert emp ; 
+
+        //初始化集成中间表-总经理
+        String recTypeIddd = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('OppSubCompany_RecordType').getRecordTypeId();
+        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = recTypeIddd, General_Manager_Company__c = emp.Id, Pre_Sales_Project_Manager__c = user1.Id);
+        insert mid1;
+
+        //初始客户分部总经理
+        MarketBidDept__c md = new MarketBidDept__c(DeptPickList__c = '999999', DeptId__c = '999999', General_Manager_Emp__c = emp.Id);
+        insert md;
+
         Opportunity opp = new Opportunity();
         opp.name = 'opp';
         opp.StageName = '线索管理' ;
@@ -52,6 +72,11 @@ public with sharing class Test_MarketingProjectInitiation {
         pc.Group__c = acc.id ; 
         pc.Stage__c = '';
         pc.Evalutionrulekey__c='机型选比重要性';
+        pc.Salesdepartment__c = '西南大区';
+        pc.MarketBidDept__c = '999999';
+        pc.Stage__c = '项目核准';
+        pc.Tendermethod__c = '普通招标';
+        pc.MW__c = '100';
         insert pc ; 
 
         Matter_Selected_Impeller__c msc = new Matter_Selected_Impeller__c();

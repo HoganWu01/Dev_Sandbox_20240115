@@ -139,42 +139,48 @@ public without sharing class ProjectapplicationTriggerHandler {
 	* @return {*}
 	*/	
 	public void autoSetValueTrigger(List<Projectapplication__c> appList) {
-		String recordType = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('Marketing_Project_Initiation_Record_Type').getRecordTypeId();
+		String recordType = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('OppSubCompany_RecordType').getRecordTypeId();
 		//存储 key:所属大区 和 value:营销项目立项申请单
 		Map<String,Integrated_Middle_Table__c> areaWindMap = new Map<String,Integrated_Middle_Table__c>();
-		for (Integrated_Middle_Table__c form : [SELECT Id,General_Manager_Company__c,Salesdepartment__c FROM Integrated_Middle_Table__c WHERE RecordTypeId =: recordType]) {
+		for (Integrated_Middle_Table__c form : [SELECT Id,General_Manager_Company__c,Pre_Sales_Project_Manager__c,Salesdepartment__c FROM Integrated_Middle_Table__c WHERE RecordTypeId =: recordType]) {
 			areaWindMap.put(form.Salesdepartment__c,form);
 		}
 		for (Projectapplication__c app : appList) {
-			//项目所属大区
-			if (areaWindMap.containsKey(app.Salesdepartment__c)) {
+			//项目所属大区-大区总经理
+			if (areaWindMap.containsKey(app.Salesdepartment__c)&&areaWindMap.get(app.Salesdepartment__c).General_Manager_Company__c!=null) {
                 //Devin 2021-11-11 取消 集成中间表【Manager_Secondary_Company__c】改为 【General_Manager_Company__c】
                 //                 取消 营销项目立项申请【Chiefgeneralmanager__c】 改为 【Manager_Secondary_Company__c】
 				app.Manager_Secondary_Company__c = areaWindMap.get(app.Salesdepartment__c).General_Manager_Company__c;
 			}else {
-				app.addError('无法匹配到所属大区所对应的二级公司总经理，请联系管理员!');
+				app.addError('无法匹配到所属大区所对应的大区总经理，请联系管理员!');
+			}
+			//项目所属大区-售前项目经理
+			if (areaWindMap.containsKey(app.Salesdepartment__c)&&areaWindMap.get(app.Salesdepartment__c).Pre_Sales_Project_Manager__c!=null) {
+				app.Pre_Sales_Project_Manager__c = areaWindMap.get(app.Salesdepartment__c).Pre_Sales_Project_Manager__c;
+			}else {
+				app.addError('无法匹配到所属大区所对应的售前项目经理，请联系管理员!');
 			}
 		}
 
-		//匹配大客户总经理  --需求变更，暂时注释掉大客户总经理自动赋值 edit by hogan 2023-04-13
-		// for (Projectapplication__c app : appList) {
+		//匹配客户分部总经理
+		for (Projectapplication__c app : appList) {
 
-		// 	//如果选择了不涉及大客户，则不配置大客户总经理
-		// 	if (app.MarketBidDept__c == '999999') {
-		// 		app.General_Manager__c = null;
-		// 		break;
-		// 	}
+			//如果选择了不涉及大客户，则不配置大客户总经理
+			// if (app.MarketBidDept__c == '999999') {
+			// 	app.General_Manager__c = null;
+			// 	break;
+			// }
 
-		// 	//客户分部
-		// 	List<MarketBidDept__c> tableList = [SELECT Id,DeptPickList__c,General_Manager_Emp__c FROM MarketBidDept__c 
-		// 	WHERE DeptPickList__c =:app.MarketBidDept__c];
+			//客户分部
+			List<MarketBidDept__c> tableList = [SELECT Id,DeptPickList__c,General_Manager_Emp__c FROM MarketBidDept__c 
+			WHERE DeptPickList__c =:app.MarketBidDept__c];
 
-		// 	if (tableList.size() > 0 && tableList[0].General_Manager_Emp__c != null) {
-		// 		app.General_Manager__c = tableList[0].General_Manager_Emp__c;
-		// 	}else {
-		// 		app.addError('无法匹配到客户分部所对应的大客户总经理，请联系管理员!');
-		// 	}
-		// }
+			if (tableList.size() > 0 && tableList[0].General_Manager_Emp__c != null) {
+				app.General_Manager__c = tableList[0].General_Manager_Emp__c;
+			}else {
+				app.addError('无法匹配到客户分部所对应的大客户总经理，请联系管理员!');
+			}
+		}
 	}
 /**
      * @Descripttion: 不能同时存在两条审批中的立项
@@ -282,4 +288,63 @@ public without sharing class ProjectapplicationTriggerHandler {
 		}
 		Approval.unlock(idList);//解锁审批单
 	}
+
+	 /**
+     * @Descripttion: 项目组成员，拼接商机团队成员姓名
+	 * @Date: ###### Thu Jun 8 15:44:39 CST 2023
+     * @Author: Hogan
+     * @param {*}
+     * @return {*}
+     */    
+    public class contractOppTeamMember implements Triggers.Handler{
+
+        public void handle() {
+            if(Trigger.isAfter && Trigger.isInsert) {
+				for(Projectapplication__c pro : (List<Projectapplication__c>)Trigger.new) {
+					Projectapplication__c p = [select id,Oppty__r.Id from Projectapplication__c where id =: pro.Id];
+					String memberStr = contractFun(p.Oppty__r.Id);
+					p.ProjectMember__c = memberStr;
+					update p;
+
+					CompetitorAnalysis__c ca = new CompetitorAnalysis__c();
+					ca.Projectapplication__c = p.Id;
+					ca.Name = '明阳';
+					insert ca;
+
+				}
+            }
+
+			if(Trigger.isAfter && Trigger.isUpdate) {
+				for(Projectapplication__c newPro : (List<Projectapplication__c>)Trigger.new) {
+					Projectapplication__c oldPro = (Projectapplication__c)Trigger.oldMap.get(newPro.Id);
+
+					if(newPro.Oppty__c != oldPro.Oppty__c && String.isNotBlank(newPro.Oppty__c)){ //商机发生变更
+						Projectapplication__c p = [select id,Oppty__r.Id from Projectapplication__c where id =: newPro.Id];
+						String memberStr = contractFun(p.Oppty__r.Id);
+						p.ProjectMember__c = memberStr;
+						update p;
+					}
+
+
+                }
+			}
+        }
+
+		public String contractFun(String oppId) {
+			System.debug('>>>>>>>>>>>商机Id：'+ oppId);
+			List<OpportunityTeamMember> oppTeamList = [SELECT ID,User.Name FROM OpportunityTeamMember 
+						WHERE OpportunityId =: oppId];
+			String str = '';
+			System.debug('>>>>>>>>>>>商机团队成员：'+ oppTeamList);
+			for (OpportunityTeamMember oppTeam : oppTeamList) {
+				str = str + oppTeam.User.Name + '，';
+			}
+			System.debug('>>>>>>>>>>>商机团队成员拼接：'+ str);
+			if (str.length() > 0) {
+				str = str.substring(0, str.length()-1);
+			}
+			return str;
+		}
+    }
+
 }

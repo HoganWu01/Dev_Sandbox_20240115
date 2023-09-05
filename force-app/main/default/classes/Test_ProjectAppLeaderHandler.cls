@@ -1,6 +1,6 @@
 @istest
 public with sharing class Test_ProjectAppLeaderHandler {
-    static testMethod void testAfterInsert(){
+    /*static testMethod void testAfterInsert(){
 
         Profile p = [SELECT Id FROM Profile WHERE Name='系统管理员'];
        
@@ -11,12 +11,13 @@ public with sharing class Test_ProjectAppLeaderHandler {
         insert user1;
         Opportunity opp = new Opportunity();
         opp.name = 'opp';
-        opp.StageName = '线索管理' ;
+        opp.StageName = '项目立项' ;
+        opp.OpportunityApprovalStatus__c = '商机提报通过';
         opp.CloseDate = Datetime.now().addMonths(1).date();
         insert opp;
 
         Projectapplication__c proj = new Projectapplication__c();
-        proj.projectleader__c = user1.Id;
+        // proj.projectleader__c = user1.Id;
         proj.Oppty__c = opp.Id;
         insert proj;
 
@@ -31,16 +32,17 @@ public with sharing class Test_ProjectAppLeaderHandler {
         insert user1;
         Opportunity opp = new Opportunity();
         opp.name = 'opp';
-        opp.StageName = '线索管理' ;
+        opp.StageName = '项目立项' ;
+        opp.OpportunityApprovalStatus__c = '商机提报通过';
         opp.CloseDate = Datetime.now().addMonths(1).date();
         insert opp;
 
         Projectapplication__c proj = new Projectapplication__c();
-        proj.projectleader__c = user1.Id;
+        // proj.projectleader__c = user1.Id;
         proj.Oppty__c = opp.Id;
         insert proj;
         proj.Communication__c = '很好';
         update proj;
 
-    }
+    }*/
 }

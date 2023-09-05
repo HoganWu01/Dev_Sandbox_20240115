@@ -80,7 +80,7 @@
                     </lightning:layoutItem>
                     
                     <lightning:layoutItem size="6" padding="around-small" class="left-align">
-                        <lightning:input type="date" name="estimatedBiddingTime" label="（预计）招标时间" disabled="false" value="{!v.opportunityObject.estimatedBiddingTime}"/>
+                        <lightning:input type="date" name="estimatedBiddingTime" label="（预计）挂网时间" disabled="false" value="{!v.opportunityObject.estimatedBiddingTime}"/>
                     </lightning:layoutItem>
                 </lightning:layout>
 

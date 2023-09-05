@@ -3,7 +3,7 @@
  * @Author: Devin
  * @Date: 2021-11-04 15:35:17
  * @LastEditors: Devin
- * @LastEditTime: 2022-01-19 15:44:50
+ * @LastEditTime: ###### Tue Jun 13 09:01:06 CST 2023
  */
 @isTest
  public with sharing class Test_Projectapplication {
@@ -22,11 +22,19 @@
         //用户数据
         User user1 = new User(Alias = '格日图', Email='standarduser@testorg.com',EmailEncodingKey='UTF-8', LastName='Test110', LanguageLocaleKey='en_US', LocaleSidKey='en_US', ProfileId = manageprofile.Id,  TimeZoneSidKey='America/Los_Angeles', UserName='standarduser@test1110.com');
         insert user1;
+
+        //员工数据
+        Employee__c emp = new Employee__c(Job_Number__c = '123456', name = 'aaa', Duty__c = '顾问', Department__c = '小卖部', Department_Number__c = '111', Status__c = '在职');
+        insert emp ; 
         
         //初始化集成中间表-总经理
-        String recTypeIddd = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('Marketing_Project_Initiation_Record_Type').getRecordTypeId();
-        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = recTypeIddd, OppChiefgeneralmanager__c = user1.Id, Pre_Sales_Project_Manager__c = user1.Id);
+        String recTypeIddd = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('OppSubCompany_RecordType').getRecordTypeId();
+        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = recTypeIddd, General_Manager_Company__c = emp.Id, Pre_Sales_Project_Manager__c = user1.Id);
         insert mid1;
+
+        //初始客户分部总经理
+        MarketBidDept__c md = new MarketBidDept__c(DeptPickList__c = '999999', DeptId__c = '999999', General_Manager_Emp__c = emp.Id);
+        insert md;
     }
 
     /**
@@ -89,7 +97,7 @@
         insert opp;
 
         Projectapplication__c proj = new Projectapplication__c();
-        proj.projectleader__c = user1.Id;
+        // proj.projectleader__c = user1.Id;
         proj.Oppty__c = opp.Id;
         proj.MarketBidDept__c = '999999';
         proj.Salesdepartment__c = '西南大区';
@@ -126,13 +134,16 @@
         insert opp;
 
         Projectapplication__c proj = new Projectapplication__c();
-        proj.projectleader__c = user1.Id;
+        // proj.projectleader__c = user1.Id;
         proj.Oppty__c = opp.Id;
         proj.MarketBidDept__c = '999999';
         proj.Salesdepartment__c = '西南大区';
         insert proj;
         
         proj.Approvalstatus__c = '11';
+        update proj;
+
+        proj.Approvalstatus__c = '20';
         update proj;
 
         List<Projectapplication__c> appLis = new List<Projectapplication__c>();

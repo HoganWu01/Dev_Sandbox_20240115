@@ -114,10 +114,73 @@ export default class ProprietorRequireReview extends LightningElement {
             if(this.objectApiName=='Projectapplication__c'){
               toCreateApproveMarketing({recordId:this.recordId})
                 .then((result) => {
-                  if(result=='ApplicationIsNull'){
+                  if(result=='RequiredIsNull'){
+                    let eventT = new ShowToastEvent({
+                        title: 'ERROR',
+                        message: '请先完善所属阶段、招标方式等必填信息!!!',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(eventT);
+                    this.isLoadedOrderUI = true;
+                    this.dispatchEvent(new CustomEvent('close'));
+                  }else if(result=='ApplicationIsNull'){
                     let eventT = new ShowToastEvent({
                         title: 'ERROR',
                         message: '机型选比叶轮or轮毂高度/竞争对手不能为空!!!',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(eventT);
+                    this.isLoadedOrderUI = true;
+                    this.dispatchEvent(new CustomEvent('close'));
+                  }else if(result=='XmProjectApplicationIsNull'){
+                    let eventT = new ShowToastEvent({
+                        title: 'ERROR',
+                        message: '【项目公司】为“已获悉”，必须填写相关项目公司信息！',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(eventT);
+                    this.isLoadedOrderUI = true;
+                    this.dispatchEvent(new CustomEvent('close'));
+                  }else if(result=='ErjiProjectApplicationIsNull'){
+                    let eventT = new ShowToastEvent({
+                        title: 'ERROR',
+                        message: '【二级公司】为“已获悉”，必须填写相关二级公司信息！',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(eventT);
+                    this.isLoadedOrderUI = true;
+                    this.dispatchEvent(new CustomEvent('close'));
+                  }else if(result=='JituanProjectApplicationIsNull'){
+                    let eventT = new ShowToastEvent({
+                        title: 'ERROR',
+                        message: '【集团公司】为“已获悉”，必须填写相关集团公司信息！',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(eventT);
+                    this.isLoadedOrderUI = true;
+                    this.dispatchEvent(new CustomEvent('close'));
+                  }else if(result=='DesignProjectApplicationIsNull'){
+                    let eventT = new ShowToastEvent({
+                        title: 'ERROR',
+                        message: '【设计院】为“已获悉”，必须填写相关设计院信息！',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(eventT);
+                    this.isLoadedOrderUI = true;
+                    this.dispatchEvent(new CustomEvent('close'));
+                  }else if(result=='GovernmentProjectApplicationIsNull'){
+                    let eventT = new ShowToastEvent({
+                        title: 'ERROR',
+                        message: '【政府侧】为“已获悉”，必须填写相关政府侧信息！',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(eventT);
+                    this.isLoadedOrderUI = true;
+                    this.dispatchEvent(new CustomEvent('close'));
+                  }else if(result=='ParticipantAnalysisIsNull'){
+                    let eventT = new ShowToastEvent({
+                        title: 'ERROR',
+                        message: '200MW以上的项目，必须填写“赛局分析-参与者分析”!',
                         variant: 'error'
                     });
                     this.dispatchEvent(eventT);
