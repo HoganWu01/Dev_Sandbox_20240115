@@ -75,7 +75,7 @@ global without sharing class ControllerMarketingProjectInitiation {
         }
 
         //容量大于200MW，参与者分析不为空
-        if ( proInit.MW__c != null && Integer.valueOf(proInit.MW__c) >= 200 && 
+        if ( proInit.MW__c != null && Decimal.valueOf(proInit.MW__c) >= 200 && 
             (proInit.CustomerProjectApplication__r.size()==0 
             || proInit.CompetitorProjectApplication__r.size()==0 
             || proInit.ComplementaryProjectApplication__r.size()==0 

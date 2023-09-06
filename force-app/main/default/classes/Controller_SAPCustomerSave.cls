@@ -122,7 +122,7 @@ global without sharing class Controller_SAPCustomerSave {
                         acc.Area__c =sapResBody.data[0].land1+'_'+sapResBody.data[0].regio ;
                         }
                         
-                        acc.Shortname__c = sapResBody.data[0].sortl ;
+                        // acc.Shortname__c = sapResBody.data[0].sortl ; //###### Thu Aug 17 17:07:10 CST 2023
                         // acc.Officialcode__c = sapResBody.data[0].stcd5 ;
                         acc.AccountSyncSAPMsg__c = 'sap已经存在该客户，直接从sap拉取客户数据同步回CRM';
                         update acc ; 

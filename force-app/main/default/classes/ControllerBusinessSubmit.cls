@@ -67,6 +67,12 @@ public with sharing class ControllerBusinessSubmit {
             }
         }
 
+        List<OpportunityTeamMember> oppTeamList = [SELECT ID FROM OpportunityTeamMember 
+            WHERE OpportunityId =: recordId and TeamMemberRole = '解决方案经理'];
+            if (oppTeamList.size()==0) {
+                approvalRequired += '★【商机】的【商机团队】必须有：“解决方案经理”。\n\r';
+            }
+
         // //业务机会名
         // if(String.isBlank(opportunity.Name)) {
         //     approvalRequired += '业务机会名,';

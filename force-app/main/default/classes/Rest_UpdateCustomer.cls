@@ -28,7 +28,7 @@ global without sharing class Rest_UpdateCustomer {
                     account.AccountNumber = customer.kunnr; //客户编号
                     account.CustomerAccountGroup__c = customer.ktokd; //客户科目组
                     account.Name = customer.name1; //客户全称
-                    account.Shortname__c = customer.sortl; //客户简称
+                    // account.Shortname__c = customer.sortl; //客户简称  //###### Thu Aug 17 17:12:01 CST 2023
                     account.Street__c = customer.stras; //街道
                     account.Postalcode__c = customer.pstlz; //邮政编码
                     account.Country__c = customer.land1; //国家

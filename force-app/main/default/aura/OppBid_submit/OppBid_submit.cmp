@@ -1,0 +1,12 @@
+<!--
+ * @Author: Hogan
+ * @Date: ###### Tue Jul 25 17:12:32 CST 2023
+ * @LastEditTime: ###### Tue Jul 25 17:12:35 CST 2023
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \mingyang\force-app\main\default\aura\OppBid_submit\OppBid_submit.cmp
+-->
+<aura:component controller="ControllerOppBidSubmit" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+   <!-- handlers-->
+   <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+</aura:component>

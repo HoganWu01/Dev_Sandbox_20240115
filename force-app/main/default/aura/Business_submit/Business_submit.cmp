@@ -18,9 +18,9 @@
             width: 50% !important;
             max-width: 50% !important;
         }
-        <!-- .slds-textarea{
+        .slds-textarea{
             height: 120px;
-        } -->
+        }
 
         .slds-modal__content{
             height: auto !important;

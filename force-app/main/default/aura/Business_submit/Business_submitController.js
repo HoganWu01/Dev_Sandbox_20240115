@@ -23,9 +23,10 @@
             console.log('result----'+result);
             if(result.approvalRequired != null && result.approvalRequired != '') {
                 cmp.set('v.clueComment',result.approvalRequired);
+                cmp.set('v.isButtonActive',true);
             }
             
-            if (result.approvalStatus == '审批中' || result.approvalStatus == '审批通过') {
+            if (result.approvalStatus == '商机提报审批中' || result.approvalStatus == '商机提报通过') {
                 cmp.set('v.isButtonActive',true);
             }
         });

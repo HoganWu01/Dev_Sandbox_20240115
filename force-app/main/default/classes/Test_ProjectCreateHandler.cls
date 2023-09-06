@@ -90,5 +90,15 @@ public with sharing class Test_ProjectCreateHandler {
         update contract;
 	}
 
+    @isTest
+    static void test_Controller_ProjectUpdate(){
+
+        Project__c pro =[select id,name from Project__c where name = 'pro'];
+
+        pro.name='proNameUpdate';
+
+        update pro ; 
+	}
+
     
 }

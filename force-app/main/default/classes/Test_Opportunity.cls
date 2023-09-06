@@ -26,16 +26,20 @@ public with sharing class Test_Opportunity {
         User user2 = new User(Alias = '格日图222', Email='standarduser222@testorg.com',EmailEncodingKey='UTF-8', LastName='Test120', LanguageLocaleKey='en_US', LocaleSidKey='en_US', ProfileId = manageprofile.Id,  TimeZoneSidKey='America/Los_Angeles', UserName='standarduser@test120.com');
         insert user2;
 
+         //员工数据
+         Employee__c emp = new Employee__c(Job_Number__c = '123456', name = 'aaa', Duty__c = '顾问', Department__c = '小卖部', Department_Number__c = '111', Status__c = '在职');
+         insert emp ; 
+
         //添加客户分部记录
-        MarketBidDept__c mb1 = new MarketBidDept__c(Name = '客户一部', General_Manager_User__c = user1.Id, DeptPickList__c = '162092f16daa04f4de53a694724b93ac', DeptId__c = '162092f16daa04f4de53a694724b93ac');
+        MarketBidDept__c mb1 = new MarketBidDept__c(Name = '客户一部', General_Manager_User__c = user1.Id, General_Manager_Emp__c = emp.Id, DeptPickList__c = '162092f16daa04f4de53a694724b93ac', DeptId__c = '162092f16daa04f4de53a694724b93ac');
         insert mb1;
-        MarketBidDept__c mb2 = new MarketBidDept__c(Name = '客户二部', General_Manager_User__c = user2.Id, DeptPickList__c = '162092f16e0f16e08b24fb54940ac5c7', DeptId__c = '162092f16e0f16e08b24fb54940ac5c7');
+        MarketBidDept__c mb2 = new MarketBidDept__c(Name = '客户二部', General_Manager_User__c = user2.Id, General_Manager_Emp__c = emp.Id, DeptPickList__c = '162092f16e0f16e08b24fb54940ac5c7', DeptId__c = '162092f16e0f16e08b24fb54940ac5c7');
         insert mb2;
 
         //添加大区、售前项目经理记录
-        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user1.Id, Pre_Sales_Project_Manager__c = user1.Id);
+        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user1.Id, Pre_Sales_Project_Manager__c = user1.Id, General_Manager_Company__c = emp.Id);
         insert mid1;
-        Integrated_Middle_Table__c mid2 = new Integrated_Middle_Table__c(Salesdepartment__c = '东北大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user2.Id, Pre_Sales_Project_Manager__c = user2.Id);
+        Integrated_Middle_Table__c mid2 = new Integrated_Middle_Table__c(Salesdepartment__c = '东北大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user2.Id, Pre_Sales_Project_Manager__c = user2.Id, General_Manager_Company__c = emp.Id);
         insert mid2;
 
         Opportunity opp  = new Opportunity();
@@ -87,6 +91,35 @@ public with sharing class Test_Opportunity {
         ControllerBusinessSubmit.businessSubmit(parentId,'请审批');
         System.Test.stopTest();
     }
+
+        /**
+     * @Descripttion: 
+     * @Author: Hogan
+     * @param {*}
+     * @return {*}
+     */    
+    static testMethod void test_bidSubmit() {
+        Opportunity opp = [SELECT Id,Approvalstatus__c FROM Opportunity WHERE Wind_Farm_Project_Name__c = '风场项目名' LIMIT 1];
+        opp.Approvalstatus__c = '30';
+        update opp;
+        System.Test.startTest();
+        ControllerOppBidSubmit.bidSubmit(opp.Id,'请审批');
+        System.Test.stopTest();
+    }
+
+       /**
+     * @Descripttion: 
+     * @Author: Hogan
+     * @param {*}
+     * @return {*}
+     */  
+    static testMethod void test_bidSubmit2() {
+        Opportunity opp = [SELECT Id,Approvalstatus__c FROM Opportunity WHERE Wind_Farm_Project_Name__c = '风场项目名' LIMIT 1];
+        System.Test.startTest();
+        ControllerOppBidSubmit.bidSubmit(opp.Id,'请审批');
+        System.Test.stopTest();
+    }
+
 
     /**
      * @Descripttion: OpportunityHandler 测试类 81%
@@ -143,6 +176,8 @@ public with sharing class Test_Opportunity {
         Projectapplication__c pac = new Projectapplication__c();
         pac.Oppty__c = opp.id ; 
         pac.Approvalstatus__c  = '30';
+        pac.MarketBidDept__c = '162092f16daa04f4de53a694724b93ac';
+        pac.Salesdepartment__c = '西南大区';
         insert pac ; 
 
         Profile ppp = [SELECT Id FROM Profile WHERE Name='系统管理员'];
