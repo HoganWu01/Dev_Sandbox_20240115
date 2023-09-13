@@ -22,7 +22,7 @@ global without sharing class Rest_RptContract {
             // System.debug('logInfo.RequestBody__c===>'+logInfo.RequestBody__c);
             List<Contractmanagement__c> conList = [SELECT Id, ObjectName__c, CreatedDate, LastModifiedDate, ContractSigningEndDate__c, ObjectName__r.Account.Name, 
             ObjectName__r.Account.Shortname__c, ObjectName__r.StageName, ObjectName__r.Projecttype__c, ObjectName__r.Province__c, 
-            ObjectName__r.Salesdepartment__c, ObjectName__r.capacity__c, toLabel(ObjectName__r.MarketBidDept__c), Objectname2__c, TaskStatus__c, 
+            ObjectName__r.Salesdepartment__c, ObjectName__r.WinCapacity__c, toLabel(ObjectName__r.MarketBidDept__c), Objectname2__c, TaskStatus__c, 
             WBS__c, SectionCapacity__c, ContractCapacity__c, DifferentCountries__c, ObjectName__r.Close__c, Company__r.Name
             FROM Contractmanagement__c WHERE ObjectName__c != ''];
 
@@ -42,7 +42,7 @@ global without sharing class Rest_RptContract {
                     oEnt.marketBidDept = con.ObjectName__r.MarketBidDept__c==null?'':con.ObjectName__r.MarketBidDept__c;
                     oEnt.contractSignStatus = con.TaskStatus__c==null?'':con.TaskStatus__c;
                     oEnt.contractSigningEndDate = con.ContractSigningEndDate__c;
-                    oEnt.contractCapacity = con.SectionCapacity__c==null?con.ObjectName__r.capacity__c:con.SectionCapacity__c;
+                    oEnt.contractCapacity = con.SectionCapacity__c==null?con.ObjectName__r.WinCapacity__c:con.SectionCapacity__c;
                     oEnt.createdDate = con.CreatedDate;
                     oEnt.modifiedDate = con.LastModifiedDate;
                     oEnt.differentCountries = con.DifferentCountries__c;
