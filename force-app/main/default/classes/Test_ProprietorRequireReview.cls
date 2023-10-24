@@ -9,7 +9,6 @@ public with sharing class Test_ProprietorRequireReview {
         rc.Deliveryrequirements__c = '1';
         rc.ProjectType__c = '陆上';
         rc.FinishDate__c = Date.today();
-        rc.CustomerSegment__c = '客户一部';
         insert rc ; 
 
         System.Test.startTest();
@@ -44,7 +43,6 @@ public with sharing class Test_ProprietorRequireReview {
         rc.Deliveryrequirements__c = '1';
         rc.ProjectType__c = '陆上';
         rc.FinishDate__c = Date.today();
-        rc.CustomerSegment__c = '客户一部';
         rc.Country__c = '国内项目';
         rc.Contractmodel__c = '11';
         insert rc ; 

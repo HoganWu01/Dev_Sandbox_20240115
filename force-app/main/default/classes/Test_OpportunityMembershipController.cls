@@ -17,12 +17,16 @@ public with sharing class Test_OpportunityMembershipController {
 
         Opportunity opp  = new Opportunity();
         opp.Name = 'opp';
+        opp.Wind_Farm_Project_Name__c = '风场项目名';
         opp.StageName ='初期运作';
         opp.CloseDate = System.today();
         opp.Projecttype__c = '陆上项目';
         opp.Periods__c = '一';
-        opp.capacity__c = '12';
+        opp.capacity__c = 12;
         opp.EPC__c = acc.Id;
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         insert opp;
     }
 
@@ -34,7 +38,7 @@ public with sharing class Test_OpportunityMembershipController {
      */    
     static testMethod void test_getOpportunityWithContactMembership() {
         
-        String oppId = [SELECT Id FROM Opportunity WHERE Name = 'opp'].Id;
+        String oppId = [SELECT Id FROM Opportunity WHERE Wind_Farm_Project_Name__c = '风场项目名' LIMIT 1].Id;
         Contact contact1 = new Contact();
         contact1.LastName = '联系人';
         insert contact1;
@@ -56,7 +60,7 @@ public with sharing class Test_OpportunityMembershipController {
      * @return {*}
      */    
     static testMethod void test_getAvailableContacts() {
-        String oppId = [SELECT Id FROM Opportunity WHERE Name = 'opp'].Id;
+        String oppId = [SELECT Id FROM Opportunity WHERE Wind_Farm_Project_Name__c = '风场项目名' LIMIT 1].Id;
 
         Contact contact = new Contact();
         contact.LastName = '联系人';
@@ -79,7 +83,7 @@ public with sharing class Test_OpportunityMembershipController {
      * @return {*}
      */    
     static testMethod void test_removeContact() {
-        String oppId = [SELECT Id FROM Opportunity WHERE Name = 'opp'].Id;
+        String oppId = [SELECT Id FROM Opportunity WHERE Wind_Farm_Project_Name__c = '风场项目名' LIMIT 1].Id;
 
         Contact contact1 = new Contact();
         contact1.LastName = '联系人';
@@ -103,7 +107,7 @@ public with sharing class Test_OpportunityMembershipController {
      * @return {*}
      */    
     static testMethod void test_addRelation() {
-        String oppId = [SELECT Id FROM Opportunity WHERE Name = 'opp'].Id;
+        String oppId = [SELECT Id FROM Opportunity WHERE Wind_Farm_Project_Name__c = '风场项目名' LIMIT 1].Id;
 
         Contact contact1 = new Contact();
         contact1.LastName = '联系人';

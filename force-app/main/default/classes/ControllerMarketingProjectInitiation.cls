@@ -15,17 +15,17 @@ global without sharing class ControllerMarketingProjectInitiation {
     @AuraEnabled(cacheable=false)
     global static String toCreateApproveMarketing(Id recordId){
         Interface_Log__c logInfo = new Interface_Log__c();
-        Projectapplication__c proInit = [SELECT Id,Process_Id__c,Chiefdesignerphone__c,Precommunication__c,Applicant_Num__c,City__c,Approvaltime__c,Province__c,Manager_Secondary_Company__r.Job_Number__c,Projectmaturityanalysis__c,Approvedmodel__c,Avewindspeed__c,Background__c,Projectadvantage__c,Designinstitute__c,Chiefdesigner__c
-                                        ,Bidmodel__c,County__c,Designerintentmodelreason__c,Designerintentmodel__c,Accountintentmodel__c,Plan__c,Approvedbatch__c,General_Manager__r.Job_Number__c,General_Manager__c
-                                        ,Internalrateofreturnoncapital__c,Group__r.Shortname__c,Accountintentmodelreason__c,Stage__c,Name2__c,Name3__c,Name1__c,Pretime__c,Name__c,ProjectName__c
+        Projectapplication__c proInit = [SELECT Id,Process_Id__c,Chiefdesignerphone__c,Precommunication__c,Applicant_Num__c,City__c,Approvaltime__c,Province__c,Projectmaturityanalysis__c,Approvedmodel__c,Avewindspeed__c,Background__c,Projectadvantage__c,Designinstitute__c,Chiefdesigner__c
+                                        ,Bidmodel__c,County__c,Designerintentmodelreason__c,Designerintentmodel__c,Accountintentmodel__c,Plan__c,Approvedbatch__c
+                                        ,Internalrateofreturnoncapital__c,Accountintentmodelreason__c,Stage__c,Name2__c,Name3__c,Name1__c,Pretime__c,Name__c,ProjectName__c
                                         ,Totalinvestmentinternalrateofreturn__c,Turbulence__c,Recommendedmodelreason__c,Evalutionrulekey__c,Secondarycompany__r.Name,Secondarycompany__c,Periods__c,Evalutionrulekeyinstruction__c
-                                        ,Oppty__c,Approval_Comments__c,Recommendedmodel__c,Communication__c,EPC_Bidding_Method__c,Salesdepartment__c,Projectproblemandkey__c,Tendercompany__c,Tendercompany__r.Name,Tendermethod__c
+                                        ,Oppty__c,Approval_Comments__c,Recommendedmodel__c,Communication__c,EPC_Bidding_Method__c,ProjectArea__c,Projectproblemandkey__c,Tendercompany__c,Tendercompany__r.Name,Tendermethod__c
                                         ,Approvalstatus__c,MW__c
                                         ,(SELECT Id,Powergeneration__c,Name,quotedprice__c,Economicrank__c FROM Application__r)
                                         ,(SELECT Id,Powergeneration__c,Is_Pre_Communicate__c,Advantage__c,Competitivemodel__c,Name,Pre_Com_Content__c FROM Application2__r)
                                         //###### Thu Jun 8 17:20:32 CST 2023
                                         ,XiangmuGongsi__c,ErjiGongsi__c,JituanGongsi__c,ProcessType__c,TargetCapacity__c
-                                        ,DesigningInstitute__c,GovernmentSide__c,ProjectType__c,Pre_Sales_Project_Manager__c,Pre_Sales_Project_Manager__r.Job_Number__c
+                                        ,DesigningInstitute__c,GovernmentSide__c,ProjectType__c
                                         ,(SELECT Name,PersonPostXm__c,ZhichiXm__c,PersonTelXm__c,PersonSuqiuXm__c,PersonOtherXm__c FROM XmProjectApplication__r)
                                         ,(SELECT Name,PersonPostErji__c,ZhichiErji__c,PersonTelErji__c,PersonSuqiuErji__c,PersonOtherErji__c FROM ErjiProjectApplication__r)
                                         ,(SELECT Name,PersonPostJt__c,ZhichiJt__c,PersonTelJt__c,PersonSuqiuJt__c,PersonOtherJt__c FROM JituanProjectApplication__r)
@@ -42,6 +42,23 @@ global without sharing class ControllerMarketingProjectInitiation {
 
         Projectapplication__c proInit2 = [SELECT Id,toLabel(MarketBidDept__c) FROM Projectapplication__c WHERE Id =: recordId];
 
+        //获取大区总经理、售前项目经理、大客户总经理
+        String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
+        List<BasicData__c> basicSalesList = [SELECT Id,
+                                                    MainChargeEmp__r.Job_Number__c,
+                                                    PreManagerEmp__r.Job_Number__c 
+                                                    FROM BasicData__c 
+                                                    WHERE RecordTypeId =:recTypeId1  
+                                                    AND ProjectArea__c =:proInit.ProjectArea__c];
+        String recTypeId2 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Customer').getRecordTypeId();
+        List<BasicData__c> basicCustList = [SELECT Id,
+                                                    MainChargeEmp__r.Job_Number__c
+                                                    FROM BasicData__c 
+                                                    WHERE RecordTypeId =:recTypeId2  
+                                                    AND MarketBidDept__c =:proInit.MarketBidDept__c];
+        if(basicSalesList.size()==0 || basicCustList.size()==0){
+            return 'BasicDataIsNull';
+        }
 
         if (proInit.Stage__c == null || proInit.Tendermethod__c == null) {
             return 'RequiredIsNull';
@@ -315,8 +332,7 @@ global without sharing class ControllerMarketingProjectInitiation {
             reqBody.fd_avg_vector = proInit.Avewindspeed__c; //平均风速
             reqBody.fd_calcuate_type = proInit.Approvedmodel__c; //核准机型
             reqBody.fd_chengshudu = proInit.Projectmaturityanalysis__c; //项目成熟度分析
-            //devin 2021-11-11 从原本的查询用户 改为 查询 员工 Chiefgeneralmanager__r 取消
-            reqBody.fd_chief_delegate = proInit.Manager_Secondary_Company__r.Job_Number__c; //大区/二级公司总经理
+            reqBody.fd_chief_delegate = basicSalesList[0].MainChargeEmp__r.Job_Number__c==null?'':basicSalesList[0].MainChargeEmp__r.Job_Number__c; //大区/二级公司总经理
             reqBody.fd_choose_province = opp.Province__c; //省
             reqBody.fd_choose_time = proInit?.Approvaltime__c==null?'':proInit.Approvaltime__c.format(); //(预计)核准时间
             reqBody.fd_city_choose = opp.City__c; //市
@@ -343,7 +359,7 @@ global without sharing class ControllerMarketingProjectInitiation {
             reqBody.fd_jituan_other = ''; //项目所属集团其他
             reqBody.fd_main_reason = proInit.Accountintentmodelreason__c==null?'':proInit.Accountintentmodelreason__c; //业主意向机型理由
             //devin 2021-11-11 改为查找 员工
-            reqBody.fd_manager = proInit?.General_Manager__c==null?'':proInit?.General_Manager__r.Job_Number__c; //大客户总经理
+            reqBody.fd_manager = basicCustList[0].MainChargeEmp__r.Job_Number__c==null?'':basicCustList[0].MainChargeEmp__r.Job_Number__c; //大客户总经理
             reqBody.fd_period_attr = proInit.Stage__c; //所属阶段
             reqBody.fd_person_post_jituan = proInit.Name3__c==null?'':proInit.Name3__c; //姓名/职位（集团公司）
             
@@ -377,7 +393,7 @@ global without sharing class ControllerMarketingProjectInitiation {
             reqBody.fd_text_fangan = proInit.EPC_Bidding_Method__c==null?'':proInit.EPC_Bidding_Method__c;//EPC方招标招标方式
             reqBody.fd_total_happen = totalHappen;//发电量(/h)
             reqBody.fd_total_in = String.valueOf(opp.capacity__c);//容量
-            reqBody.fd_war_zone = proInit.Salesdepartment__c==null?'':proInit.Salesdepartment__c;//所属大区/二级公司
+            reqBody.fd_war_zone = proInit.ProjectArea__c==null?'':proInit.ProjectArea__c;//所属大区/二级公司
             reqBody.fd_wenti_guanjian = proInit.Projectproblemandkey__c==null?'':proInit.Projectproblemandkey__c;//项目问题点及关键点
             reqBody.fd_xiangmu_gongsi = proInit.XiangmuGongsi__c==null?'':proInit.XiangmuGongsi__c;//项目公司
             reqBody.fd_zhao_company = proInit?.Tendercompany__c==null?'':proInit.Tendercompany__r.Name;//招标公司
@@ -399,7 +415,7 @@ global without sharing class ControllerMarketingProjectInitiation {
             reqBody.fd_technical_problem = proInit?.TechnicalProblem__c==null?'':proInit.TechnicalProblem__c;//存在的技术问题
             reqBody.fd_designing_institute = proInit?.DesigningInstitute__c==null?'':proInit.DesigningInstitute__c;//设计院（已获悉、未获悉）
             reqBody.fd_government_side = proInit?.GovernmentSide__c==null?'':proInit.GovernmentSide__c;//政府侧
-            reqBody.fd_pre_pm = proInit.Pre_Sales_Project_Manager__c==null?'':proInit.Pre_Sales_Project_Manager__r.Job_Number__c;//售前项目经理
+            reqBody.fd_pre_pm = basicSalesList[0].PreManagerEmp__r.Job_Number__c==null?'':basicSalesList[0].PreManagerEmp__r.Job_Number__c;//售前项目经理
             reqBody.fd_process_type = proInit.ProcessType__c==null?'':proInit.ProcessType__c;//流程类型
             reqBody.fd_target_capacity = String.valueOf(proInit.TargetCapacity__c);//目标获取容量
 
@@ -477,8 +493,6 @@ global without sharing class ControllerMarketingProjectInitiation {
             reqBody.fd_problem_other = proInit.ProblemOther__c;//竞标面临的问题和挑战-其他
             reqBody.fd_problem_program = proInit.ProblemProgram__c;//竞标面临的问题和挑战-方案成本上
 
-            //devin 2021-11-11 改为查找员工
-            // reqBody.n23 = proInit?.General_Manager__c==null?'':proInit?.General_Manager__r.Job_Number__c;//大客户总监
             String response = Utils.callOut(JSON.serialize(reqBody),ext.Request_URL__c,'ControllerMarketingProjectInitiation',ext.Request_Source__c,ext.Request_Method__c,ext.Request_Key__c,ext.Initialization_Vector__c);
             if (response.substring(0,5) == 'Error') {
                 return response;

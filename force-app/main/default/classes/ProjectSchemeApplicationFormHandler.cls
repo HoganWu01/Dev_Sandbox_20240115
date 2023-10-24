@@ -32,27 +32,6 @@ public without sharing class ProjectSchemeApplicationFormHandler {
     		}
     	}	
 }
-	/**
-	 * @description: 插入或更新前判断风能设计院组长是否为空，为空则去查找集成中间表
-	* @param  {*}
-	* @return {*}
-	*/	
-	public void autoSetValueTrigger(List<Project_Scheme_Application_Form__c> schemeList) {
-		String recordType = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('Project_Scheme_Form_Record_Type').getRecordTypeId();
-		//存储 key:项目所属战区 和 value:项目方案申请单
-		Map<String,Integrated_Middle_Table__c> areaWindMap = new Map<String,Integrated_Middle_Table__c>();
-		for (Integrated_Middle_Table__c form : [SELECT Id,Wind_Energy_Design_Name__c,Wind_Design_Job_Number__c,Project_Area__c FROM Integrated_Middle_Table__c WHERE RecordTypeId =: recordType]) {
-			areaWindMap.put(form.Project_Area__c,form);
-		}
-		for (Project_Scheme_Application_Form__c variable : schemeList) {
-			//项目所属战区
-			if (areaWindMap.containsKey(variable.ProjectTheater__c)) {
-				variable.Wind_Energy_Design__c = areaWindMap.get(variable.ProjectTheater__c).Wind_Energy_Design_Name__c;
-			}else {
-				variable.addError('无法匹配到项目所属战区所对应的风能设计院区域组长，请手动填写');
-			}
-		}
-	}
 
 	/**
 	 * @description: 审批状态修改并且审批状态为审批中时锁定对象

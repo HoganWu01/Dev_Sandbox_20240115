@@ -15,7 +15,7 @@ global without sharing class Controller_OAMarketingPlanAdd {
     @AuraEnabled(cacheable=false)
     global static String MarketingPlanAdd(Id recordId){
         Interface_Log__c logInfo = new Interface_Log__c();
-        Project_Scheme_Application_Form__c proScheme = [SELECT Id,Process_Id__c,Applicant_Num__c,Models__c,Owner_Title__c,Owner_Department__c,Aftermarketornot__c,Wind_Energy_Design__c,Wind_Energy_Design__r.Job_Number__c
+        Project_Scheme_Application_Form__c proScheme = [SELECT Id,Process_Id__c,Applicant_Num__c,Models__c,Owner_Title__c,Owner_Department__c,Aftermarketornot__c
                                                         ,Proprietor_Responsible_Phone__c,Demandtype__c,Schemetype__c,Reason__c,
                                                         City__c,
                                                         Telephone__c,CommunicationTheme__c,CommunicationDate__c
@@ -25,8 +25,21 @@ global without sharing class Controller_OAMarketingPlanAdd {
                                                         ,Approval_Comments__c,Period__c,OwnerLeaderLevel__c,Fancoordinatecode__c,MaterialType__c,RoadSurveyStartTime__c,Rawwinddatacode__c,FormPhone__c,Projectbelong__c,Objectname__c
                                                         ,ProjectPhase__c,Applicatbelong__c,Province__c,ProjectInformationReason__c,Windfarmrangecode__c,RoadSurveyType__c,Projectstatus__c
                                                         ,Oppty__c,Windfarmprojectname__c,BeginDate__c,RoadSurveySite__c,Turbulent__c,Demandstatement__c,Approvalstatus__c
-                                                        ,Dataurl__c,Capacity__c,ProjectTheater__c,Dataurlcode__c,Address__c,ExtremeWindSpeed__c,AverageWindSpeed__c,Mappingmapcode__c,Projecttype__c,Feasibilitystudyreportcode__c
+                                                        ,Dataurl__c,Capacity__c,Oppty__r.ProjectArea__c,toLabel(Oppty__r.ProjectDeliveryMarket__c),Dataurlcode__c,Address__c,ExtremeWindSpeed__c,AverageWindSpeed__c,Mappingmapcode__c,Projecttype__c,Feasibilitystudyreportcode__c
                                                          FROM Project_Scheme_Application_Form__c WHERE Id =: recordId];
+
+        //获取大区总经理、售前项目经理、大客户总经理
+        String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
+        List<BasicData__c> basicSalesList = [SELECT Id,
+                                                    WindLeaderEmp__r.Job_Number__c,
+                                                    toLabel(ProjectArea__c)
+                                                    FROM BasicData__c 
+                                                    WHERE RecordTypeId =:recTypeId1  
+                                                    AND ProjectArea__c =:proScheme.Oppty__r.ProjectArea__c];
+        if(basicSalesList.size()==0){
+            return 'BasicDataIsNull';
+        }
+
         RequestBody reqBody = new RequestBody();  
         String returnId = '';
         External_System_Param__c ext = External_System_Param__c.getValues('oaMarketingPlanAdd');
@@ -41,7 +54,7 @@ global without sharing class Controller_OAMarketingPlanAdd {
             reqBody.fd_apply_dept = proScheme.Owner_Department__c;//申请人部门
             reqBody.fd_apply_post = proScheme.Owner_Title__c;//岗位,示例值(销售经理)
             reqBody.fd_applyer = proScheme.Applicant_Num__c;
-            reqBody.fd_area_group = proScheme?.Wind_Energy_Design__c==null?'':proScheme.Wind_Energy_Design__r.Job_Number__c;//风能设计院区域组长
+            reqBody.fd_area_group = basicSalesList[0].WindLeaderEmp__r.Job_Number__c==null?'':basicSalesList[0].WindLeaderEmp__r.Job_Number__c;//风能设计院区域组长
             reqBody.fd_bidding_before_model = String.isBlank(proScheme.Models__c)?'':proScheme.Models__c;//机型（标前提资）需求类型包括项目提资时必填
             reqBody.fd_business_selphone = String.isBlank(proScheme.Proprietor_Responsible_Phone__c)?'':proScheme.Proprietor_Responsible_Phone__c;//业主方负责人联系电话
             reqBody.fd_category_need = proScheme.Demandtype__c;//需求类型
@@ -114,12 +127,12 @@ global without sharing class Controller_OAMarketingPlanAdd {
             reqBody.fd_turbulence = String.isBlank(proScheme.Turbulent__c)?'':proScheme.Turbulent__c;//	湍流
             reqBody.fd_url_ziliao = String.isBlank(proScheme.Dataurl__c)?'':proScheme.Dataurl__c;//资料网址
             reqBody.fd_volume_project = proScheme.Capacity__c==null?0:proScheme.Capacity__c;//容量(MW)_项目,示例值(150)
-            reqBody.fd_war_zone = String.isBlank(proScheme.ProjectTheater__c)?'':proScheme.ProjectTheater__c;//项目所属战区,示例值(云南公司)
+            reqBody.fd_war_zone = basicSalesList[0].ProjectArea__c;//项目所属战区,示例值(云南公司)
             reqBody.fd_website_pass = String.isBlank(proScheme.Dataurlcode__c)?'':proScheme.Dataurlcode__c;//资料密码
             reqBody.fd_weiguan_adress = String.isBlank(proScheme.Address__c)?'':proScheme.Address__c;//选址地点方案类型包括"选址"关键字时必填
             reqBody.fd_wind_speed_max = String.isBlank(proScheme.ExtremeWindSpeed__c)?'':proScheme.ExtremeWindSpeed__c;//极限风速
             reqBody.fd_wind_speed_mean = String.isBlank(proScheme.AverageWindSpeed__c)?'':proScheme.AverageWindSpeed__c;//平均风速
-
+            reqBody.fd_market_type = proScheme.Oppty__r.ProjectDeliveryMarket__c;//项目交付市场
 
             String response = Utils.callOut(JSON.serialize(reqBody),ext.Request_URL__c,'Controller_OAMarketingPlanAdd',ext.Request_Source__c,ext.Request_Method__c,ext.Request_Key__c,ext.Initialization_Vector__c);
 
@@ -315,7 +328,6 @@ global without sharing class Controller_OAMarketingPlanAdd {
             reqBody.fd_wind_speed_max = String.isBlank(proScheme.ExtremeWindSpeed__c)?'':proScheme.ExtremeWindSpeed__c;//极限风速
             reqBody.fd_wind_speed_mean = String.isBlank(proScheme.AverageWindSpeed__c)?'':proScheme.AverageWindSpeed__c;//平均风速
 
-
             String response = Utils.callOut(JSON.serialize(reqBody),ext.Request_URL__c,'Controller_OAMarketingPlanAdd_资源',ext.Request_Source__c,ext.Request_Method__c,ext.Request_Key__c,ext.Initialization_Vector__c);
 
 
@@ -464,6 +476,7 @@ global without sharing class Controller_OAMarketingPlanAdd {
         public String fd_weiguan_adress{get;set;} //选址地点方案类型包括"选址"关键字时必填
         public String fd_wind_speed_max{get;set;} //极限风速
         public String fd_wind_speed_mean{get;set;} //平均风速
+        public String fd_market_type{get;set;} //项目交付市场
     }
 
     public class ResponseBody {

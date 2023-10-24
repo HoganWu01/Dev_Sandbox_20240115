@@ -22,8 +22,8 @@ global without sharing class Rest_RptContract {
             // System.debug('logInfo.RequestBody__c===>'+logInfo.RequestBody__c);
             List<Contractmanagement__c> conList = [SELECT Id, ObjectName__c, CreatedDate, LastModifiedDate, ContractSigningEndDate__c, ObjectName__r.Account.Name, 
             ObjectName__r.Account.Shortname__c, ObjectName__r.StageName, ObjectName__r.Projecttype__c, ObjectName__r.Province__c, 
-            ObjectName__r.Salesdepartment__c, ObjectName__r.WinCapacity__c, toLabel(ObjectName__r.MarketBidDept__c), Objectname2__c, TaskStatus__c, 
-            WBS__c, SectionCapacity__c, ContractCapacity__c, DifferentCountries__c, ObjectName__r.Close__c, Company__r.Name
+            toLabel(ObjectName__r.ProjectArea__c), ObjectName__r.WinCapacity__c, toLabel(ObjectName__r.MarketBidDept__c), Objectname2__c, TaskStatus__c, 
+            WBS__c, SectionCapacity__c, ContractCapacity__c, ObjectName__r.ProjectDeliveryMarket__c, ObjectName__r.ProjectCustomerType__c, ObjectName__r.Close__c, Company__r.Name
             FROM Contractmanagement__c WHERE ObjectName__c != ''];
 
             if (conList.size()>0) {
@@ -38,14 +38,15 @@ global without sharing class Rest_RptContract {
                     oEnt.stageName = con.ObjectName__r.StageName==null?'':con.ObjectName__r.StageName;
                     oEnt.projectType = con.ObjectName__r.Projecttype__c==null?'':con.ObjectName__r.Projecttype__c;
                     oEnt.province = con.ObjectName__r.Province__c==null?'':con.ObjectName__r.Province__c;
-                    oEnt.salesDepartment = con.ObjectName__r.Salesdepartment__c==null?'':con.ObjectName__r.Salesdepartment__c;
+                    oEnt.salesDepartment = con.ObjectName__r.ProjectArea__c==null?'':con.ObjectName__r.ProjectArea__c;
                     oEnt.marketBidDept = con.ObjectName__r.MarketBidDept__c==null?'':con.ObjectName__r.MarketBidDept__c;
                     oEnt.contractSignStatus = con.TaskStatus__c==null?'':con.TaskStatus__c;
                     oEnt.contractSigningEndDate = con.ContractSigningEndDate__c;
                     oEnt.contractCapacity = con.SectionCapacity__c==null?con.ObjectName__r.WinCapacity__c:con.SectionCapacity__c;
                     oEnt.createdDate = con.CreatedDate;
                     oEnt.modifiedDate = con.LastModifiedDate;
-                    oEnt.differentCountries = con.DifferentCountries__c;
+                    oEnt.projectDeliveryMarket = con.ObjectName__r.ProjectDeliveryMarket__c;
+                    oEnt.projectCustomerType = con.ObjectName__r.ProjectCustomerType__c;
                     oEnt.oppCloseStatus = String.valueOf(con.ObjectName__r.Close__c);
                     oEnt.contractAccountName = con.Company__r.Name;
                     conListTemp.add(oEnt);
@@ -92,7 +93,8 @@ global without sharing class Rest_RptContract {
         global String opportunityId{get;set;} //商机ID
         global String projectNumber{get;set;} //项目编号
         global String projectName{get;set;} //项目名称
-        global String differentCountries{get;set;} //客户类型
+        global String projectDeliveryMarket{get;set;} //项目交付市场
+        global String projectCustomerType{get;set;} //项目客户类型
         global String accountName{get;set;} //客户全称
         global String accountShortName{get;set;} //客户简称
         global String stageName{get;set;} //阶段

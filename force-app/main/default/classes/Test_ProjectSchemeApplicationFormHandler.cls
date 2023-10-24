@@ -26,10 +26,13 @@ public with sharing class Test_ProjectSchemeApplicationFormHandler {
         proScheme.Approvalstatus__c = '11';
         update proScheme;
 
-        ProjectSchemeApplicationFormHandler pa = new ProjectSchemeApplicationFormHandler();
-        List<Project_Scheme_Application_Form__c> schemeList = new List<Project_Scheme_Application_Form__c>();
-        schemeList.add(proScheme);
-        pa.autoSetValueTrigger(schemeList);
+        proScheme.Approvalstatus__c = '30';
+        update proScheme;
+
+        // ProjectSchemeApplicationFormHandler pa = new ProjectSchemeApplicationFormHandler();
+        // List<Project_Scheme_Application_Form__c> schemeList = new List<Project_Scheme_Application_Form__c>();
+        // schemeList.add(proScheme);
+        // pa.autoSetValueTrigger(schemeList);
         
     }
 

@@ -49,6 +49,32 @@ public with sharing class Test_MarketingContract {
         ee.Status__c = '在职';
         insert ee;
 
+        Opportunity opp  = new Opportunity();
+        opp.Name = 'opp';
+        opp.ProjectSubmission__c = '正常提报线索';
+        opp.Projecttype__c = '陆上项目';
+        opp.Wind_Farm_Project_Name__c = '风场项目名';
+        opp.StageName ='招投标';
+        opp.CloseDate = System.today();
+        opp.recordTypeId = '0122u0000008UxEAAU';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
+        opp.OpportunityApprovalStatus__c = '商机提报通过';
+        insert opp;
+
+        String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
+        BasicData__c bd = new BasicData__c(RecordTypeId = recTypeId1, name = 'aaa', ProjectArea__c = 'SR101', BasicNo__c = 'A001');
+        insert bd;
+
+        Contractmanagement__c cm=new Contractmanagement__c();
+        cm.Contractname__c='合同';
+        cm.WBS__c='123';
+        cm.Approvalstatus__c='10';
+        cm.DifferentCountries__c='国内非关联方';
+        cm.ObjectName__c = opp.Id;
+        insert cm;
+
         ContractSupplement__c cc = new ContractSupplement__c();
         cc.SealApplication__c = '是';
         cc.Seal_Org__c = '基地';
@@ -62,34 +88,14 @@ public with sharing class Test_MarketingContract {
         cc.WBS__c = '5';
         cc.Project_Manager__c = ee.id;
         cc.ProjectType__c = '陆上';
-        // cc.ProjectArea__c = '9';
         cc.Approvalstatus__c = '10';
         cc.AgreementIntroduction__c = '11';
         cc.AccountName__c = acc.id;
         cc.Business_Manager__c = ee.id;
         cc.ContractCapacity__c = 1.0;
-        // cc.TaxRate__c = '17%';
-        // cc.Amount__c = 1.0;
         cc.ContractQuantity__c = 1.0;
-        // cc.Price__c = 1.0;
-        // cc.PaymentMethod__c = '其他';
-        // cc.PaymentMethodOther__c='19';
+        cc.Contractname__c = cm.Id;
 
-        MarketBidDept__c marketBidDept = new MarketBidDept__c();
-        marketBidDept.Name='客户三部';
-        marketBidDept.DeptId__c='162092f16e404d92eb794264e8797013';
-        insert marketBidDept;
-        cc.CustomerMarketingDivision__c = marketBidDept.DeptId__c; //客户营销分部id
-
-        ProjectArea__c projectArea = new ProjectArea__c(); 
-        projectArea.Name='西北大区';
-        projectArea.fdid__c='183bfa1a47eff4b47f600a34a7486c2c';
-        projectArea.AreaId__c='175687b6a2fad210cba0146485eaf5c2';
-        projectArea.AreaPerson__c='王博';
-        projectArea.AreaPersonId__c='151eb7ea8e38e715f426c6f47a6aa6a0';
-        insert projectArea;
-
-        cc.ProjectArea__c=projectArea.fdid__c;
         insert cc ; 
 
         Seal_Related_Information__c sc = new Seal_Related_Information__c();

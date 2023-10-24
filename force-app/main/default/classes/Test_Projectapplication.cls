@@ -14,6 +14,10 @@
         opp.StageName = '线索管理';
         opp.CloseDate = System.today();
         opp.Wind_Farm_Project_Name__c = '风场项目名';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
+        opp.OpportunityApprovalStatus__c = '线索提报通过';
         insert opp;
 
         //简档数据
@@ -33,8 +37,8 @@
         insert mid1;
 
         //初始客户分部总经理
-        MarketBidDept__c md = new MarketBidDept__c(DeptPickList__c = '999999', DeptId__c = '999999', General_Manager_Emp__c = emp.Id);
-        insert md;
+        // MarketBidDept__c md = new MarketBidDept__c(DeptPickList__c = '999999', DeptId__c = '999999', General_Manager_Emp__c = emp.Id);
+        // insert md;
     }
 
     /**
@@ -94,13 +98,16 @@
         opp.Periods__c = '一八';
         opp.capacity__c = 12;
         opp.OpportunityApprovalStatus__c = '线索转化通过';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         insert opp;
 
         Projectapplication__c proj = new Projectapplication__c();
         // proj.projectleader__c = user1.Id;
         proj.Oppty__c = opp.Id;
-        proj.MarketBidDept__c = '999999';
-        proj.Salesdepartment__c = '西南大区';
+        // proj.MarketBidDept__c = '999999';
+        // proj.Salesdepartment__c = '西南大区';
         insert proj;
         
         proj.Approvalstatus__c = '11';
@@ -131,13 +138,16 @@
         opp.Periods__c = '一八';
         opp.capacity__c = 12;
         opp.OpportunityApprovalStatus__c = '线索转化通过';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         insert opp;
 
         Projectapplication__c proj = new Projectapplication__c();
         // proj.projectleader__c = user1.Id;
         proj.Oppty__c = opp.Id;
-        proj.MarketBidDept__c = '999999';
-        proj.Salesdepartment__c = '西南大区';
+        // proj.MarketBidDept__c = '999999';
+        // proj.Salesdepartment__c = '西南大区';
         insert proj;
         
         proj.Approvalstatus__c = '11';

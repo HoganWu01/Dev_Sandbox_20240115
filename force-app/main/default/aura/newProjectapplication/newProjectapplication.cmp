@@ -30,7 +30,7 @@
 
                 <lightning:layout multipleRows="true">
                     <lightning:layoutItem size="6" padding="around-small" class="left-align">
-                       <lightning:input name="salesdepartment" label="所属大区/二级公司" disabled="true" value="{!v.opportunityObject.salesdepartment}"/>
+                       <lightning:input name="projectArea" label="所属大区/二级公司" disabled="true" value="{!v.opportunityObject.projectArea}"/>
                     </lightning:layoutItem>
                     
                     <lightning:layoutItem size="6" padding="around-small" class="left-align">

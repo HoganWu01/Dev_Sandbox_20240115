@@ -10,32 +10,6 @@ trigger ProjectSchemeApplicationFormTrigger on Project_Scheme_Application_Form__
     	.bind(Triggers.Evt.afterupdate, new ProjectSchemeApplicationFormHandler.SendNotifyToOwner())
     	.execute();
 	ProjectSchemeApplicationFormHandler proHandler = new ProjectSchemeApplicationFormHandler();
-	if (Trigger.isBefore) {
-		// if (Trigger.isInsert) {
-		// 	List<Project_Scheme_Application_Form__c> schemeInsertList = new List<Project_Scheme_Application_Form__c>();
-		// 	for (Project_Scheme_Application_Form__c scheme : (List<Project_Scheme_Application_Form__c>)Trigger.new) {
-		// 		//项目所属战区不为空，风能设计院组长为空
-		// 		if (scheme.ProjectTheater__c!=null && scheme.Wind_Energy_Design__c==null) {
-		// 			schemeInsertList.add(scheme);
-		// 		}
-		// 	}
-		// 	if (schemeInsertList.size()>0) {
-		// 		proHandler.autoSetValueTrigger(schemeInsertList);
-		// 	}
-		// }
-		if (Trigger.isUpdate) {
-			List<Project_Scheme_Application_Form__c> schemeUpdateList = new List<Project_Scheme_Application_Form__c>();
-			for (Project_Scheme_Application_Form__c scheme : (List<Project_Scheme_Application_Form__c>)Trigger.new) {
-				//项目所属战区不为空，风能设计院组长为空
-				if (scheme.ProjectTheater__c!=null && scheme.Wind_Energy_Design__c==null) {
-					schemeUpdateList.add(scheme);
-				}
-			}
-			if (schemeUpdateList.size()>0) {
-				proHandler.autoSetValueTrigger(schemeUpdateList);
-			}
-		}
-	}
 	if (Trigger.isAfter) {
 		if (Trigger.isUpdate) {
 			List<Project_Scheme_Application_Form__c> schemeUpdateList = new List<Project_Scheme_Application_Form__c>();

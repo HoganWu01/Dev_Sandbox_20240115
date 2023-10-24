@@ -228,7 +228,7 @@ public without sharing class LeadHandler implements Triggers.Handler {
             convertOpp.Key_Account_General_Manager__c = clead.ExecutiveGeneralManage__c;//大客户总经理
             convertOpp.Customer_Secondary_Company__c = clead.Subcompany__c;//客户二级公司
             convertOpp.Choose__c = clead.Customer_Side_Approved__c;//客户侧是否立项-进入当年建设盘子
-            convertOpp.Salesdepartment__c = clead.SalesDepartment__c;//所属大区/二级子公司
+            // convertOpp.Salesdepartment__c = clead.SalesDepartment__c;//所属大区/二级子公司
             convertOpp.Transfer2__c = clead.Transfer__c;//是否为线索转化商机
             convertOpp.Periods__c = clead.Numberofperiods__c;//期数（单位：期）
             convertOpp.Province__c = clead.Province__c;//省份

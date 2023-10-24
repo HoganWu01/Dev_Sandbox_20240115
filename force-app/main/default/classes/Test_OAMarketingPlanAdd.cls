@@ -21,6 +21,24 @@ public with sharing class Test_OAMarketingPlanAdd {
         open.URL__c = 'http://61.142.78.5:8011/admin/oauth/token';
         insert open;
 
+        Opportunity opp  = new Opportunity();
+        opp.Name = 'opp';
+        opp.ProjectSubmission__c = '正常提报线索';
+        opp.Projecttype__c = '陆上项目';
+        opp.Wind_Farm_Project_Name__c = '风场项目名';
+        opp.StageName ='线索管理';
+        opp.CloseDate = System.today();
+        opp.recordTypeId = '0122u0000008UxEAAU';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
+        opp.OpportunityApprovalStatus__c = '线索提报通过';
+        insert opp;
+
+        String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
+        BasicData__c bd = new BasicData__c(RecordTypeId = recTypeId1, name = 'aaa', ProjectArea__c = 'SR101', BasicNo__c = 'A001');
+        insert bd;
+
         Project_Scheme_Application_Form__c proScheme = new Project_Scheme_Application_Form__c();
         proScheme.Approval_Comments__c = '请审批';
         //proScheme.Applicant_Num__c = '1';
@@ -32,6 +50,7 @@ public with sharing class Test_OAMarketingPlanAdd {
         //proScheme.City__c = '' ; 
         proScheme.Technicalexchange__c='产品推介' ; 
         proScheme.Demandstatement__c = '新增需求';
+        proScheme.Oppty__c = opp.Id;
         insert proScheme ; 
 
         Resource_Project_Scheme_Application__c proScheme1 = new Resource_Project_Scheme_Application__c();

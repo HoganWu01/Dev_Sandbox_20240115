@@ -50,18 +50,22 @@ global without sharing class ProjectCreateHandler implements Triggers.Handler {
             }
         }
 
-        //合同商务相关字段更新，同时更新到项目对象
+        //合同商务项目名称更新，同时更新到项目对象
         if (Trigger.isAfter && Trigger.isUpdate) {
 
-            //--------需要处理  2022-12-13
-
-            // for(Contractmanagement__c newContract : (List<Contractmanagement__c>)Trigger.new) {
-            //     Contractmanagement__c oldContract = (Contractmanagement__c)Trigger.oldMap.get(newContract.Id);
-            //     if(newContract.Objectname2__c != oldContract.Objectname2__c && String.isNotBlank(WBS__c)){
-            //         //更新SAP项目名称
-            //         Controller_SAP4Project.SAP4ProjectNameUpdate(newContract.Objectname2__c, newContract.WBS__c);
-            //     }
-            // }
+            for(Contractmanagement__c newContract : (List<Contractmanagement__c>)Trigger.new) {
+                Contractmanagement__c oldContract = (Contractmanagement__c)Trigger.oldMap.get(newContract.Id);
+                if(newContract.Objectname2__c != oldContract.Objectname2__c){
+                    //更新项目的项目名称
+                    List<Project__c> proList = [select id,name from Project__c where Contract__c =: newContract.Id];
+                    if (proList.size()>0) {
+                        Project__c upPro = new Project__c();
+                        upPro.Id = proList[0].id;
+                        upPro.Name = newContract.Objectname2__c;
+                        update upPro;
+                    }
+                }
+            }
         }
         
     }

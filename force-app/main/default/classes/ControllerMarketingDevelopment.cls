@@ -7,8 +7,12 @@ global without sharing class ControllerMarketingDevelopment {
     @AuraEnabled(cacheable=false)
     global static String toCreateMarketingDevelop(Id recordId){
         Interface_Log__c logInfo = new Interface_Log__c();
-        ResourceApproval__c resApproval = [SELECT Seal_Org__c,Seal_Safekeep_Dept__c,Approval_Comments__c,Process_Id__c,Id,AgreementFullName__c,	Is_Create_Company__c,AgreementName__c,ResourceArea__c,NewAgreementIntroduction__c,Applicant_Num__c,FileType__c,Agreement_Handler__r.Job_Number__c,Agreement_Handler__c,Agreement_Handler__r.Department_Number__c,ResourceGroup__c,SealApplication__c,Approvalstatus__c
-                                          ,(SELECT Id,Document_Category__c,Document_Name__c,Seal_Company__c,Seal_Type__c,Seal_Numble__c FROM Seal_Related_Information__r),Business_Type__c,Investment_Whether__c,ProjectInvestment__r.Process_Id__c
+        ResourceApproval__c resApproval = [SELECT Seal_Org__c,Seal_Safekeep_Dept__c,Approval_Comments__c,Process_Id__c,Id,AgreementFullName__c,	
+                                            Is_Create_Company__c,AgreementName__c,NewAgreementIntroduction__c,Applicant_Num__c,FileType__c,
+                                            Agreement_Handler__r.Job_Number__c,Agreement_Handler__c,Agreement_Handler__r.Department_Number__c,SealApplication__c,Approvalstatus__c
+                                          ,(SELECT Id,Document_Category__c,Document_Name__c,Seal_Company__c,Seal_Type__c,Seal_Numble__c FROM Seal_Related_Information__r),
+                                          Business_Type__c,Investment_Whether__c,ProjectInvestment__r.Process_Id__c,
+                                          Opportunity__r.Account.TopGroup__c,toLabel(Opportunity__r.ProjectArea__c)
                                            FROM ResourceApproval__c WHERE Id =: recordId];
         RequestBody reqBody = new RequestBody();
         // List<String> fileCategory = new List<String>(); //文档类别
@@ -59,14 +63,14 @@ global without sharing class ControllerMarketingDevelopment {
             // reqBody.fd_file_category = fileCategory; //文档类别
             reqBody.fd_file_type = resApproval.FileType__c; //文件类别
             reqBody.fd_jingban_charge = resApproval.Agreement_Handler__c==null?'':resApproval.Agreement_Handler__r.Department_Number__c; //经办部门设置(部门编码)
-            reqBody.fd_project_group = resApproval.ResourceGroup__c==null?'':resApproval.ResourceGroup__c; //资源所属集团
-            reqBody.fd_project_group_text = resApproval.ResourceGroup__c==null?'':resApproval.ResourceGroup__c; //资源所属集团
+            reqBody.fd_project_group = resApproval.Opportunity__r.Account.TopGroup__c==null?'':resApproval.Opportunity__r.Account.TopGroup__c; //资源所属集团
+            reqBody.fd_project_group_text = resApproval.Opportunity__r.Account.TopGroup__c==null?'':resApproval.Opportunity__r.Account.TopGroup__c; //资源所属集团
             // reqBody.fd_quality_filaname = qualityFilename; //资质文件名称
             reqBody.fd_seal_compay_name = sealCompayName; //印章归属公司
             reqBody.fd_seal_name = sealName; //印章类别
             reqBody.fd_seal_number = sealNumber; //印章数量
             reqBody.fd_text_description = resApproval.NewAgreementIntroduction__c; //协议内容简介
-            reqBody.fd_war_zone = resApproval.ResourceArea__c; //资源所属区域
+            reqBody.fd_war_zone = resApproval.Opportunity__r.ProjectArea__c==null?'':resApproval.Opportunity__r.ProjectArea__c; //资源所属区域
             reqBody.fd_xieyi_name = resApproval.AgreementName__c; //协议名称,示例值(配套协议)
             reqBody.fd_xieyi_person = resApproval.Agreement_Handler__c==null?'':resApproval.Agreement_Handler__r.Job_Number__c; //协议经办人
             reqBody.fd_xieyi_wholename = resApproval.AgreementFullName__c==null?'':resApproval.AgreementFullName__c; //协议方全称,示例值(配套协议)

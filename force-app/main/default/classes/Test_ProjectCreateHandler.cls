@@ -74,6 +74,7 @@ public with sharing class Test_ProjectCreateHandler {
         project.StandardProject__c = 'L1-20120000';
         project.ProgramYear__c = 2021;
         project.OwnerId = user.id;
+        project.Contract__c = contract.id;
         insert project;
     }
 
@@ -83,10 +84,12 @@ public with sharing class Test_ProjectCreateHandler {
         Contractmanagement__c contract =[select id,name from Contractmanagement__c where Contractname__c = 'aaa'];
 
         contract.Approvalstatus__c='30';
+        contract.Section__c='aaa';
 
         update contract ; 
 
         contract.TaskStatus__c = '已完成';
+        contract.ContractSigningEndDate__c = Datetime.now().date();
         update contract;
 	}
 

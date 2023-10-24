@@ -37,8 +37,9 @@ public with sharing class Test_OppContractSignStatus {
         opp.Periods__c = '一';
         opp.Close__c = false;
         opp.recordTypeId = '0122u0000008UxEAAU';
-        opp.Salesdepartment__c = '西南大区';
-        opp.MarketBidDept__c = '162092f16daa04f4de53a694724b93ac';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         opp.OwnerId = user1.Id;
         opp.OpportunityApprovalStatus__c = '线索转化通过';
         insert opp;

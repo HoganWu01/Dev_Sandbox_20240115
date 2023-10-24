@@ -6,7 +6,7 @@ public without sharing class ProjectApplication {
     @AuraEnabled 
     public static Map<Object,Object> initApproval(String recordId) {
         Opportunity opportunity = [SELECT   Id,
-                                            Salesdepartment__c,//所属大区/二级公司  
+                                            ProjectArea__c,//所属大区/二级公司  
                                             Chiefgeneralmanager__c,//大区/二级公司总经理 
                                             // Group__c,//项目所属集团
                                             Key_Account_General_Manager__c,//大客户总经理
@@ -72,7 +72,7 @@ public without sharing class ProjectApplication {
         String approvalRequired = '';//审批必填字段
 
         //所属大区/二级公司
-        if(String.isBlank(opportunity.Salesdepartment__c)) {
+        if(String.isBlank(opportunity.ProjectArea__c)) {
             approvalRequired += '所属大区/二级公司,';
         }
         //大区/二级公司总经理 

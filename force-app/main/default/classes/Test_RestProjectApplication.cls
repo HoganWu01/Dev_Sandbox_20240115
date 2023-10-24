@@ -26,15 +26,6 @@ public with sharing class Test_RestProjectApplication {
         Employee__c emp = new Employee__c(Job_Number__c = 'A00001', name = 'aaa', Duty__c = '顾问', Department__c = '小卖部', Department_Number__c = '111', Status__c = '在职');
         insert emp ; 
 
-          //初始化集成中间表-总经理
-        String recTypeIddd = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('OppSubCompany_RecordType').getRecordTypeId();
-        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = recTypeIddd, General_Manager_Company__c = emp.Id, Pre_Sales_Project_Manager__c = user1.Id);
-        insert mid1;
-
-        //初始客户分部总经理
-        MarketBidDept__c md = new MarketBidDept__c(DeptPickList__c = '999999', DeptId__c = '999999', General_Manager_Emp__c = emp.Id);
-        insert md;
-        
         //商机数据
         Opportunity opp  = new Opportunity();
         opp.Name = 'opp';
@@ -50,8 +41,9 @@ public with sharing class Test_RestProjectApplication {
         opp.Periods__c = '一';
         opp.Close__c = false;
         opp.recordTypeId = '0122u0000008UxEAAU';
-        opp.Salesdepartment__c = '西南大区';
-        opp.MarketBidDept__c = '162092f16daa04f4de53a694724b93ac';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         opp.OwnerId = user1.Id;
         opp.OpportunityApprovalStatus__c = '线索转化通过';
         insert opp;
@@ -59,8 +51,6 @@ public with sharing class Test_RestProjectApplication {
         Projectapplication__c proj = new Projectapplication__c();
         proj.Process_Id__c = '1111';
         proj.Oppty__c = opp.Id;
-        proj.MarketBidDept__c = '999999';
-        proj.Salesdepartment__c = '西南大区';
         insert proj;
         
     }

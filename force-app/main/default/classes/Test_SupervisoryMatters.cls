@@ -26,18 +26,6 @@ public with sharing class Test_SupervisoryMatters {
         User user2 = new User(Alias = '格日图222', Email='standarduser222@testorg.com',EmailEncodingKey='UTF-8', LastName='Test120', LanguageLocaleKey='en_US', LocaleSidKey='en_US', ProfileId = manageprofile.Id,  TimeZoneSidKey='America/Los_Angeles', UserName='standarduser@test120.com');
         insert user2;
 
-        //添加客户分部记录
-        MarketBidDept__c mb1 = new MarketBidDept__c(Name = '客户一部', General_Manager_User__c = user1.Id, DeptPickList__c = '162092f16daa04f4de53a694724b93ac', DeptId__c = '162092f16daa04f4de53a694724b93ac');
-        insert mb1;
-        MarketBidDept__c mb2 = new MarketBidDept__c(Name = '客户二部', General_Manager_User__c = user2.Id, DeptPickList__c = '162092f16e0f16e08b24fb54940ac5c7', DeptId__c = '162092f16e0f16e08b24fb54940ac5c7');
-        insert mb2;
-
-        //添加大区、售前项目经理记录
-        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user1.Id, Pre_Sales_Project_Manager__c = user1.Id);
-        insert mid1;
-        Integrated_Middle_Table__c mid2 = new Integrated_Middle_Table__c(Salesdepartment__c = '东北大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user2.Id, Pre_Sales_Project_Manager__c = user2.Id);
-        insert mid2;
-
         Opportunity opp  = new Opportunity();
         opp.Name = 'opp';
         opp.ProjectSubmission__c = '正常提报线索';
@@ -52,8 +40,9 @@ public with sharing class Test_SupervisoryMatters {
         opp.Periods__c = '一';
         opp.Close__c = false;
         opp.recordTypeId = '0122u0000008UxEAAU';
-        opp.Salesdepartment__c = '西南大区';
-        opp.MarketBidDept__c = '162092f16daa04f4de53a694724b93ac';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         opp.OwnerId = user1.Id;
         opp.OpportunityApprovalStatus__c = '商机提报通过';
         insert opp;
@@ -139,11 +128,11 @@ public with sharing class Test_SupervisoryMatters {
         update matters;
 
         matters.ChargeDept__c = '销售大区';
-        matters.ProjectArea__c = '18682430bad7ffb1d9bf0b54ffdbebc0';
+        matters.ProjectArea__c = 'SR101';
         update matters;
 
         matters.ChargeDept__c = '客户分部';
-        matters.ResponsibilityBidDept__c = '162092f16daa04f4de53a694724b93ac';
+        matters.ResponsibilityBidDept__c = 'KA101';
         update matters;
     }
 

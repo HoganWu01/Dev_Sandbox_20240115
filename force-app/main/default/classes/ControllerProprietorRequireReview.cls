@@ -21,7 +21,7 @@ global without sharing class ControllerProprietorRequireReview {
     global static String toCreateApprove(Id recordId) {
         Requirementsreview__c req = [SELECT Id,Process_Id__c,Approval_Comments__c,Applicant_Num__c,Owner_Department__c,Applicationsector__c,Marketing_Center__r.Job_Number__c,Regional_Agency__r.Job_Number__c,Business_Manager__r.Job_Number__c,Presidential_System_Room__r.Job_Number__c,Approvalstatus__c,
                                     (SELECT Id,Originalcontractbrand__c,Recommendedbrand__c,Configurationname__c FROM Requirementsreview__r),
-                                    Projectcategory__c,Country__c,Group__r.Name,Contractmodel__c,Projectname__c,Contractwarrantyperiod__c,Configurationcategory__c,Deliveryrequirements__c,Salesdepartment__c,ProjectType__c,CustomerSegment__c,FinishDate__c FROM Requirementsreview__c WHERE id =: recordId];
+                                    Projectcategory__c,Country__c,Group__r.Name,Contractmodel__c,Projectname__c,Contractwarrantyperiod__c,Configurationcategory__c,Deliveryrequirements__c,toLabel(Opportunityname__r.ProjectArea__c),ProjectType__c,toLabel(Opportunityname__r.MarketBidDept__c),FinishDate__c FROM Requirementsreview__c WHERE id =: recordId];
         List<String> original = new List<String>(); //原合同品牌
         List<String> recom = new List<String>(); //推荐品牌
         List<String> config = new List<String>(); //配置名称
@@ -61,11 +61,11 @@ global without sharing class ControllerProprietorRequireReview {
             reqBody.fd_range_setting = req.Configurationcategory__c;       //范畴选取
             reqBody.fd_setting_name = config;       //配置名称
             reqBody.fd_submit_request = req.Deliveryrequirements__c;       //交付要求
-            reqBody.fd_war_zone = req.Salesdepartment__c!=null?req.Salesdepartment__c:'';       //项目所属区域    
+            reqBody.fd_war_zone = req.Opportunityname__r.ProjectArea__c;       //项目所属区域    
             reqBody.n30 = req.Regional_Agency__r.Job_Number__c; //区域代办处    
             reqBody.n40 = req.Presidential_System_Room__r.Job_Number__c;       //总统系统室
             reqBody.fd_project_type = req.ProjectType__c;       //项目类型
-            reqBody.fd_customer_segment = String.isBlank(req.CustomerSegment__c)?'':req.CustomerSegment__c;       //客户分部
+            reqBody.fd_customer_segment = req.Opportunityname__r.MarketBidDept__c;       //客户分部
             reqBody.fd_finish_date = req.FinishDate__c;         //决策完成时间
 
             

@@ -13,7 +13,15 @@ public with sharing class Test_Account {
         Account acc = new Account();
         acc.Name = '广州风机';
         acc.BeenGroup__c = true;
+        acc.TopGroup__c = 'TG101';
         insert acc;
+
+        Account subAcc = new Account();
+        subAcc.Name = '广州风机子级客户';
+        subAcc.BeenGroup__c = false;
+        subAcc.TopGroup__c = 'TG101';
+        subAcc.ParentId = acc.Id;
+        insert subAcc;
     }
 
 
@@ -29,6 +37,7 @@ public with sharing class Test_Account {
         Account acc = new Account();
         acc.Id = accId;
         acc.SysSAP__c = true;
+        acc.TopGroup__c = 'TG102';
         System.Test.startTest();
         update acc;
         System.Test.stopTest();

@@ -28,7 +28,6 @@ public with sharing class ControllerBusinessSubmit {
                                          Name,//业务机会名
                                          Account.Name,//客户全称
                                          capacity__c,//容量
-                                         Salesdepartment__c,//所属大区/二级公司 
                                          Chiefgeneralmanager__c,//大区/二级公司总经理 
                                         //  Group__c,//项目所属集团
                                          Key_Account_General_Manager__c,//大客户总经理
@@ -137,6 +136,11 @@ public with sharing class ControllerBusinessSubmit {
 
         System.debug('comment----'+comment);
         
+        List<String> oppId = new List<String>();
+        oppId.add(recordId);
+        OppManagerHandler.FindManagerBySWZ(oppId);//更新大区总经理、售前项目经理
+        OppManagerHandler.FindManagerByMBD(oppId);//更新大客户总经理
+
         Approval.ProcessSubmitRequest apsr= new Approval.ProcessSubmitRequest();
         // apsr.setProcessDefinitionNameOrId('OppLeadConvApprV1');
         //留言内容和对象ID

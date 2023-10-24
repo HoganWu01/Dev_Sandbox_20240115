@@ -199,6 +199,9 @@ public without sharing class ShareCommonTriggerHandler {
                                 //用户Id
                                 for (Id userId : userConditionMap.get(conditionId)) {
                                     Schema.SObjectType stdShareType = Schema.getGlobalDescribe().get(objShareName);
+                                    if (stdShareType == null) {
+                                        continue;
+                                    }
                                     SObject stdShare = stdShareType.newSObject();
                                     stdShare.put('ParentId', childId); 
                                     stdShare.put('UserOrGroupId', userId); 
@@ -210,7 +213,9 @@ public without sharing class ShareCommonTriggerHandler {
                         }
                     }
                 }
-                Database.insert(insertShareList,false);
+                if (insertShareList.size()>0) {
+                    Database.insert(insertShareList,false);
+                }
             }
         }
     }

@@ -82,10 +82,14 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
                 if ((newOpp.Name != oldOpp.Name || newOpp.Periods__c != oldOpp.Periods__c || newOpp.AccountId != oldOpp.AccountId || newOpp.Province__c != oldOpp.Province__c || newOpp.City__c != oldOpp.City__c || newOpp.County__c != oldOpp.County__c || newOpp.Wind_Farm_Project_Name__c != oldOpp.Wind_Farm_Project_Name__c || newOpp.capacity__c != oldOpp.capacity__c) 
                     && (newOpp.StageName != oldOpp.StageName || newOpp.Close__c != oldOpp.Close__c) 
                     && String.isNotBlank(newOpp.ProjectNumber__c)) {
+                        //更新商机下项目的项目名称
+                        updatePrjName(newOpp.Id);
                         Controller_SAP4Project.SAP4ProjectNameUpdateAndUpStatus(newOpp.Id);
                 }else {
                     //商机名称变更，更新SAP项目名称
                     if(newOpp.Name != oldOpp.Name){
+                        //更新商机下项目的项目名称
+                        updatePrjName(newOpp.Id);
                         List<Contractmanagement__c> listContract = [SELECT Objectname2__c,WBS__c FROM Contractmanagement__c WHERE ObjectName__c =: newOpp.Id];
                         if (listContract.size() > 0) {
                             //更新商机下所有合同的sap项目名称和商机名称
@@ -103,6 +107,8 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
                         // Controller_SAP4Project.SAP4ProjectStatusUpdate(newOpp.Id);
                         // //设置SAP项目用户状态
                         // Controller_SAP4Project.SAP4ProjectStatusUpdate2(newOpp.Id);
+                        //更新商机下项目的项目名称
+                        updatePrjName(newOpp.Id);
                         Controller_SAP4Project.SAP4ProjectNameUpdateAndUpStatus(newOpp.Id);
                     }
                 }
@@ -117,7 +123,7 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
                 //     capacityList.add(newOpp.id);
                 // }
 
-                if (newOpp.Salesdepartment__c!=oldOpp.Salesdepartment__c) {
+                if (newOpp.ProjectArea__c!=oldOpp.ProjectArea__c) {
                     oppListFindManagerBySWZ.add(newOpp.Id);
                 }
 
@@ -159,11 +165,11 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
             }
 
             if (oppListFindManagerBySWZ.size()>0) {
-                FindManagerBySWZ(oppListFindManagerBySWZ);
+                OppManagerHandler.FindManagerBySWZ(oppListFindManagerBySWZ);
             }
 
             if (oppListFindManagerByMBD.size()>0) {
-                FindManagerByMBD(oppListFindManagerByMBD);
+                OppManagerHandler.FindManagerByMBD(oppListFindManagerByMBD);
             }
 
             // if (manualOppList.size() > 0) {
@@ -216,7 +222,7 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
                 //商机阶段初始化，更新SAP项目状态
                 // Controller_SAP4Project.SAP4ProjectStatusUpdate(newOpp.Id);
 
-               if (opp.Salesdepartment__c!=null) {
+               if (opp.ProjectArea__c!=null) {
                 oppListFindManagerBySWZ.add(opp.Id);
                }
 
@@ -226,11 +232,11 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
             }
 
             if (oppListFindManagerBySWZ.size()>0) {
-                FindManagerBySWZ(oppListFindManagerBySWZ);
+                OppManagerHandler.FindManagerBySWZ(oppListFindManagerBySWZ);
             }
 
             if (oppListFindManagerByMBD.size()>0) {
-                FindManagerByMBD(oppListFindManagerByMBD);
+                OppManagerHandler.FindManagerByMBD(oppListFindManagerByMBD);
             }
         }
 
@@ -334,6 +340,30 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
     }
 
     /**
+     * @Descripttion: 更新商机下项目的项目名称
+     * @Author: irving
+     * @param {*}
+     * @return {*}
+     */
+    public void updatePrjName(String oppId){
+        List<Contractmanagement__c> listContract = [SELECT Id,Objectname2__c FROM Contractmanagement__c WHERE ObjectName__c =: oppId];
+        if (listContract.size() > 0) {
+            //更新商机下所有合同的sap项目名称和商机名称
+            for(Contractmanagement__c newContract : listContract) {
+                //###### Wed Oct 11 14:37:18 CST 2023 补充更新商机下合同下项目的项目名称
+                List<Project__c> proList = [select id,name from Project__c where Contract__c =: newContract.Id];
+                if (proList.size()>0) {
+                    Project__c upPro = new Project__c();
+                    upPro.Id = proList[0].id;
+                    upPro.Name = newContract.Objectname2__c;
+                    update upPro;
+                }
+            }
+        }
+    }
+
+
+    /**
      * @Descripttion: 文本容量把所有的中文去掉 取前段数字
      * @Author: irving
      * @param {*}
@@ -360,231 +390,6 @@ public without sharing class OpportunityHandler implements Triggers.Handler{
     //     }
 
     //     update oppList ; 
-    // }
-
-    /**
-     * @Descripttion: 商机更改二级战区/公司时查找集成中间表找对应的二级公司经理、售前项目经理
-     * @Author: irving
-     * @param {*}
-     * @return {*}
-     */
-    public void FindManagerBySWZ(List<String> oppListFindManagerBySWZ) {
-
-
-        List<Opportunity> oppList = [SELECT ID,
-                                            Salesdepartment__c,   //所属大区/二级公司
-                                            Chiefgeneralmanager__c,   //大区/二级公司总经理
-                                            Pre_Sales_Project_Manager__c //售前项目经理
-                                            FROM Opportunity WHERE ID IN:oppListFindManagerBySWZ];
-
-        if (oppList[0].Salesdepartment__c==null) {
-            return ; 
-        }
-
-        // if (oppList[0].Salesdepartment__c=='海外') {
-        //     return ; 
-        // }
-
-        // if (oppList[0].Salesdepartment__c=='能源技术公司') {
-        //     return ; 
-        // }
-
-        String recTypeId =Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('OppSubCompany_RecordType').getRecordTypeId();
-
-        List<Integrated_Middle_Table__c> tableList = [SELECT Id,
-                                                    OppChiefgeneralmanager__c,
-                                                    Pre_Sales_Project_Manager__c,
-                                                    Salesdepartment__c 
-                                                    FROM Integrated_Middle_Table__c 
-                                                    WHERE RecordTypeId =:recTypeId  
-                                                    AND Salesdepartment__c =:oppList[0].Salesdepartment__c];
-
-
-        if (tableList.size()==0 || tableList[0].OppChiefgeneralmanager__c==null) {
-            return ; 
-        }
-
-        if(tableList[0].OppChiefgeneralmanager__c != null){
-            oppList[0].Chiefgeneralmanager__c = tableList[0].OppChiefgeneralmanager__c;
-        }
-
-        if(tableList[0].Pre_Sales_Project_Manager__c != null){
-            oppList[0].Pre_Sales_Project_Manager__c = tableList[0].Pre_Sales_Project_Manager__c;
-        }
-
-        upsert oppList ; 
-    }
-
-    /**
-     * @Descripttion: 商机更改客户分部时查找《客户/营销分部》找对应的分部总经理
-     * @Author: irving
-     * @param {*}
-     * @return {*}
-     */
-    public void FindManagerByMBD(List<String> oppListFindManagerByMBD) {
-
-
-        List<Opportunity> oppList = [SELECT ID,
-                                            MarketBidDept__c,   //客户分部
-                                            Key_Account_General_Manager__c   //大客户总经理
-                                            FROM Opportunity WHERE ID IN:oppListFindManagerByMBD];
-
-        if (oppList[0].MarketBidDept__c==null) {
-            return ; 
-        }
-
-        List<MarketBidDept__c> tableList = [SELECT Id,
-                                                    DeptPickList__c,
-                                                    General_Manager_User__c
-                                                    FROM MarketBidDept__c 
-                                                    WHERE DeptPickList__c =:oppList[0].MarketBidDept__c];
-
-
-        if (tableList.size()==0 || tableList[0].General_Manager_User__c==null) {
-            return ; 
-        }
-
-        if(tableList[0].General_Manager_User__c != null){
-            oppList[0].Key_Account_General_Manager__c = tableList[0].General_Manager_User__c;
-        }
-
-        upsert oppList ; 
-    }
-
-    /**
-     * @Descripttion: 当系统识别商机阶段为【中标/赢单】，系统自动创建《合同商务》记录
-     * @Author: Devin
-     * @Editor: 
-     * @param {*}
-     * @return {*}
-     */
-    // public void createContractmanagement(List<String> opportunityIdList) {
-        
-    //     Set<String> existOppIdSet = new Set<String>();
-    //     for (Contractmanagement__c cm : [SELECT Id,ObjectName__c FROM Contractmanagement__c WHERE ObjectName__c IN: opportunityIdList]) {
-    //         existOppIdSet.add(cm.ObjectName__c);
-    //     }
-        
-    //     List<Contractmanagement__c> cmList = new List<Contractmanagement__c>();
-    //     for (String oppId : opportunityIdList) {
-    //         //一个商机只有一个合同商务 如果已经存在 则不创建
-    //         if (!existOppIdSet.contains(oppId)) {
-    //             //查询商机信息
-    //             Opportunity opp = [SELECT Id,Name FROM Opportunity WHERE Id =: oppId];
-
-    //             Contractmanagement__c cm = new Contractmanagement__c();
-    //             cm.ObjectName__c = oppId;//商机
-    //             cmList.add(cm);
-    //         }
-    //     }
-        
-    //     insert cmList;
-
-
-    //     //irving  2022-02-10  中标赢单 共享只读权限给项目的pmo（区分海上陆上） 以及合同管理专员（曾静）
-
-    //     List<Opportunity> oppList = [SELECT ID FROM Opportunity WHERE ID IN :opportunityIdList];
-
-    //     List<OpportunityShare> insertList = new List<OpportunityShare>();
-
-    //     List<Project__c> projectList = [SELECT ID,Opportunity__c,Type__c FROM Project__c WHERE Opportunity__c IN :opportunityIdList];
-
-    //     String recTypeId =Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('ProjectType_RecordType').getRecordTypeId();
-
-
-    //     Integrated_Middle_Table__c table1 = new Integrated_Middle_Table__c();
-
-    //     //项目存在  通知pmo  取陆上还是海上的pmo  取出角色，根据角色查用户
-    //     if (projectList.size()>0 && projectList!=null &&projectList[0].Type__c!=null ) {
-    //          table1 = [SELECT Id,
-    //                             ProjectType__c,   //项目类型
-    //                             RoleName__c     //角色名称               
-    //                             FROM Integrated_Middle_Table__c 
-    //                             WHERE RecordTypeId =:recTypeId  
-    //                             AND ProjectType__c = :projectList[0].Type__c];
-    //     }
-
-    //     //根据类型通知角色为陆上pmo或者海上pmo的用户,根据角色-->用户
-    //     List<User> userList = new List<User>();
-    //     if (table1!=null &&String.isNotBlank(table1.RoleName__c)) {
-
-    //         UserRole  userrole = [select id,name FROM UserRole WHERE Name = :table1.RoleName__c];
-
-    //         userList = [SELECT ID,NAME,UserRoleId  FROM USER WHERE UserRoleId =:userrole.id AND IsActive = true] ;
-    //     }
-        
-
-
-    //     String recTypeId1 =Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('OppWinBid_RecordType').getRecordTypeId();
-
-    //     //主要取通知陆上&海上的指定简档
-    //     Integrated_Middle_Table__c table2 = [SELECT Id,
-    //                                                 OppWinBidNotify__c   //简档名称(商机中标后通知)
-    //                                                 FROM Integrated_Middle_Table__c 
-    //                                                 WHERE RecordTypeId =:recTypeId1  ];
-
-    //     List<User> userListFromProfile  =  new List<User>();
-
-    //     if (String.isNotBlank(table2.OppWinBidNotify__c)) {
-    //         List<String> profileNameList = table2.OppWinBidNotify__c.split(';');   
-    //         List<Profile> profileList = [SELECT ID FROM Profile WHERE NAME IN :profileNameList]; 
-    //         List<String> profileIdList = new List<String>();
-    //         for (Profile p : profileList) {
-    //             profileIdList.add(p.id);
-    //         }
-
-    //         if (profileIdList.size()>0) {
-    //             userListFromProfile = [SELECT ID,NAME,ProfileId FROM User WHERE ProfileId IN:profileIdList AND IsActive = true];
-    //         }
-
-    //     }
-        
-        
-
-        
-
-
-    //     if (userListFromProfile.size()>0) {
-
-    //         for (User u : userListFromProfile) {
-                
-    //             for (Opportunity opp : oppList) {
-
-    //                 OpportunityShare share = new OpportunityShare();
-                                                                    
-    //                 share.OpportunityId = opp.Id;
-    //                 share.UserOrGroupId = u.id;   //分配给简档查到的用户
-    //                 share.OpportunityAccessLevel = 'Read';
-    //                 insertList.add(share);
-                                                        
-    //                 }
-    //         }
-            
-    //     }
-
-        
-    //     if (userList.size()>0) {
-
-    //         for (User u : userList) {
-                
-    //             for (Opportunity opp : oppList) {
-
-    //                 OpportunityShare share = new OpportunityShare();
-                    
-    //                 share.OpportunityId = opp.Id;
-    //                 share.UserOrGroupId = u.id;   //分配给项目pmo
-    //                 share.OpportunityAccessLevel = 'Read';
-    //                 insertList.add(share);
-        
-    //             }
-
-    //         }
-            
-    //     }
-
-    //     System.debug('insertList===='+insertList);
-
-    //     insert insertList ; 
     // }
 
     /**

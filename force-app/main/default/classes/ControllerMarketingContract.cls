@@ -16,11 +16,11 @@ global without sharing class ControllerMarketingContract {
         Interface_Log__c logInfo = new Interface_Log__c();
         ContractSupplement__c contractSup = [SELECT Process_Id__c,Approval_Comments__c,SealApplication__c,Applicant_Num__c,ProtocolType__c,Owner_Department__c,
                                             WBS__c,Project_Manager__c,Project_Manager__r.Job_Number__c,xiangmu__c,ProjectType__c,
-                                            ProjectArea__c,Approvalstatus__c,
+                                            Contractname__r.ObjectName__r.ProjectArea__c,Approvalstatus__c,
                                             AgreementIntroduction__c,Chief_Representative__c,Chief_Representative__r.Job_Number__c,
                                             AccountName__c,AccountName__r.Name,AccountName__r.AccountNumber,PaymentRatioSum__c,
                                             Country__c,Business_Manager__c,Business_Manager__r.Job_Number__c, 
-                                            CustomerMarketingDivision__c,
+                                            toLabel(Contractname__r.ObjectName__r.MarketBidDept__c),
                                             ContractCapacity__c,TaxRate__c,Amount__c,ContractQuantity__c,Price__c,Contractname__r.Process_Id__c,Other_Protocol_Types__c,Seal_Org__c,
                                             Seal_Safekeep_Dept__c,Contractname__r.ProcessTheme__c,PaymentMethod__c,PaymentMethodOther__c,
                                             (SELECT Id,Document_Category__c,Document_Name__c,Seal_Company__c,Seal_Type__c,Seal_Numble__c FROM Marketing_Contract_Seal__r),
@@ -36,6 +36,20 @@ global without sharing class ControllerMarketingContract {
         if (contractSup.ProtocolType__c.contains('支付条款变更') && contractSup.PaymentRatioSum__c!=100) {
             return '付款比例总和不等于100%，请检查！';
         }
+
+        //获取大区总经理、售前项目经理、大客户总经理
+        String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
+        List<BasicData__c> basicSalesList = [SELECT Id,
+                                                    MainChargeEmp__r.Job_Number__c,
+                                                    toLabel(ProjectArea__c)
+                                                    FROM BasicData__c 
+                                                    WHERE RecordTypeId =:recTypeId1  
+                                                    AND ProjectArea__c =:contractSup.Contractname__r.ObjectName__r.ProjectArea__c];
+        if(basicSalesList.size()==0){
+            return 'BasicDataIsNull';
+        }
+
+
         List<String> sealCompayName = new List<String>(); //印章归属公司
         List<String> sealName = new List<String>(); //印章类别
         List<String> sealNumber = new List<String>(); //印章数量
@@ -163,20 +177,17 @@ global without sharing class ControllerMarketingContract {
             reqBody.fd_deal_type = contractSup.ProtocolType__c; //协议类型
             reqBody.fd_jingban_charge = contractSup.Owner_Department__c; //经办部门设置,示例值(1000106)
 
-            MarketBidDept__c marketBidDept = [SELECT Id,Name FROM MarketBidDept__c WHERE DeptId__c =: contractSup.CustomerMarketingDivision__c];
-            reqBody.fd_market_hd_name = marketBidDept.Name; //客户营销分部名称
-            reqBody.fd_market_sub = contractSup?.CustomerMarketingDivision__c==null?'':contractSup.CustomerMarketingDivision__c; //客户营销分部id
+            reqBody.fd_market_hd_name = contractSup.Contractname__r.ObjectName__r.MarketBidDept__c; //客户营销分部名称
+            // reqBody.fd_market_sub = contractSup?.CustomerMarketingDivision__c==null?'':contractSup.CustomerMarketingDivision__c; //客户营销分部id
 
-            //销售区域
-            ProjectArea__c projectArea = [SELECT Id,Name,AreaPersonId__c,AreaPerson__c FROM ProjectArea__c WHERE fdid__c =: contractSup.ProjectArea__c];
-            reqBody.fd_namezone_represent = projectArea.AreaPerson__c;//区域负责人名称 项目所属区域 自动带出
+            reqBody.fd_namezone_represent = basicSalesList[0].MainChargeEmp__r.Job_Number__c;//区域负责人名称 项目所属区域 自动带出
             reqBody.fd_project_code = contractSup.WBS__c; //项目编码
             reqBody.fd_project_manager = contractSup?.Project_Manager__c==null?'':contractSup.Project_Manager__r.Job_Number__c; //项目经理,示例值(A02323)
             reqBody.fd_project_name = String.isBlank(contractSup.xiangmu__c)?'':contractSup.xiangmu__c; //项目名称
             reqBody.fd_project_type = contractSup.ProjectType__c; //项目类型,可用值:陆上,海上,示例值(海上)
-            reqBody.fd_war_zone = projectArea.Name; //项目所属区域
+            reqBody.fd_war_zone = basicSalesList[0].ProjectArea__c; //项目所属区域
             reqBody.fd_xieyi_text_description = contractSup.AgreementIntroduction__c==null?'':contractSup.AgreementIntroduction__c; //协议内容简介
-            reqBody.fd_zone_represent = projectArea.AreaPersonId__c; //区域负责人ID 项目所属区域 自动带出
+            // reqBody.fd_zone_represent = projectArea.AreaPersonId__c; //区域负责人ID 项目所属区域 自动带出
             reqBody.fd_bg_capacity = String.valueOf(contractSup.ContractCapacity__c); //变更后合同容量, 协议类型为“机型或配置变更”时必填
             reqBody.fd_bg_customer_code = contractSup.AccountName__c==null?'':(contractSup.AccountName__r.AccountNumber==null?'':contractSup.AccountName__r.AccountNumber); //变更后客户编码, 协议类型为“主体变更”时必填
             reqBody.fd_bg_customer_name = contractSup.AccountName__c==null?'':contractSup.AccountName__r.Name; //变更后客户实际值, 协议类型为“主体变更”时必填,格式：客户编码

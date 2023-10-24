@@ -9,11 +9,24 @@ public with sharing class Test_GetContractName {
         logInfo.RequestBody__c = '';
         insert logInfo;
 
+        Opportunity opp  = new Opportunity();
+        opp.name = 'opp';
+        opp.Completiontime__c = Datetime.now().date();
+        opp.Contractstage__c = '初版评审';
+        opp.Startdate__c = Datetime.now().date();
+        opp.Contractsigning__c = Datetime.now().date();
+        opp.ContractDate__c = Datetime.now().date();
+        opp.StageName ='招投标';
+        opp.OpportunityApprovalStatus__c = '线索转化通过';
+        opp.CloseDate = Datetime.now().date();
+        insert opp;
+
         Contractmanagement__c cm=new Contractmanagement__c();
         cm.Contractname__c='合同';
         cm.WBS__c='123';
         cm.Approvalstatus__c='10';
         cm.DifferentCountries__c='国内非关联方';
+        cm.ObjectName__c = opp.id ; 
         insert cm;
     }
 
@@ -64,7 +77,7 @@ public with sharing class Test_GetContractName {
                 contractTemp.projectName = conApproval.Objectname2__c==null?'':conApproval.Objectname2__c;
                 contractTemp.customerCode = conApproval.Company__r.AccountNumber==null?'':conApproval.Company__r.AccountNumber;
                 contractTemp.customerName = conApproval.Company__r.Name==null?'':conApproval.Company__r.Name;
-                contractTemp.customerType = conApproval.DifferentCountries__c==null?'':conApproval.DifferentCountries__c;
+                contractTemp.projectCustomerType = conApproval.DifferentCountries__c==null?'':conApproval.DifferentCountries__c;
                 contractNameListTemp.add(contractTemp);
             }
         System.Test.stopTest();

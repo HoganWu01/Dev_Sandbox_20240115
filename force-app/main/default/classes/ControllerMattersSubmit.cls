@@ -77,6 +77,10 @@ public without sharing class ControllerMattersSubmit {
         // Approval.unlock(matters.id);//解锁
         update matters;
 
+        List<String> mattersId = new List<String>();
+        mattersId.add(recordId);
+        MattersHandler.Execute(mattersId);//更新总经理、经理
+
         Approval.ProcessSubmitRequest apsr= new Approval.ProcessSubmitRequest();
         apsr.setProcessDefinitionNameOrId('MattersFinishProcessV6');
         //留言内容和对象ID
@@ -113,6 +117,10 @@ public without sharing class ControllerMattersSubmit {
         matters.ExtensionReason_Temp__c = extensionReasonTemp;
         update matters;
         
+        List<String> mattersId = new List<String>();
+        mattersId.add(recordId);
+        MattersHandler.Execute(mattersId);//更新总经理、经理
+
         Approval.ProcessSubmitRequest apsr= new Approval.ProcessSubmitRequest();
         apsr.setProcessDefinitionNameOrId('MattersExtensionProcessV2');
         //留言内容和对象ID

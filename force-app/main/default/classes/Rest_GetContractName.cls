@@ -17,7 +17,7 @@ global without sharing class Rest_GetContractName {
 		try
         {
         //查找合同商务
-            for (Contractmanagement__c conApproval : [SELECT Id,Contractname__c,WBS__c,Objectname2__c,Company__r.AccountNumber,	Company__r.Name,DifferentCountries__c FROM Contractmanagement__c WHERE (Approvalstatus__c in ('10','11')) AND Contractname__c!=null]) {
+            for (Contractmanagement__c conApproval : [SELECT Id,Contractname__c,WBS__c,Objectname2__c,Company__r.AccountNumber,	Company__r.Name,toLabel(ObjectName__r.ProjectDeliveryMarket__c), toLabel(ObjectName__r.ProjectCustomerType__c) FROM Contractmanagement__c WHERE (Approvalstatus__c in ('10','11')) AND Contractname__c!=null]) {
                 ContractNameEntity contractTemp = new ContractNameEntity();
                 contractTemp.contractId = conApproval.Id;
                 contractTemp.name = conApproval.Contractname__c;
@@ -25,7 +25,8 @@ global without sharing class Rest_GetContractName {
                 contractTemp.projectName = conApproval.Objectname2__c==null?'':conApproval.Objectname2__c;
                 contractTemp.customerCode = conApproval.Company__r.AccountNumber==null?'':conApproval.Company__r.AccountNumber;
                 contractTemp.customerName = conApproval.Company__r.Name==null?'':conApproval.Company__r.Name;
-                contractTemp.customerType = conApproval.DifferentCountries__c==null?'':conApproval.DifferentCountries__c;
+                contractTemp.projectDeliveryMarket = conApproval.ObjectName__r.ProjectDeliveryMarket__c==null?'':conApproval.ObjectName__r.ProjectDeliveryMarket__c;
+                contractTemp.projectCustomerType = conApproval.ObjectName__r.ProjectCustomerType__c==null?'':conApproval.ObjectName__r.ProjectCustomerType__c;
                 contractNameListTemp.add(contractTemp);
             }
             responseClass.status = 'Success';
@@ -86,6 +87,7 @@ global without sharing class Rest_GetContractName {
         global String projectName {get;set;}//项目名称
         global String customerCode {get;set;}//客户编号
         global String customerName {get;set;}//客户名称
-        global String customerType {get;set;}//客户类型
+        global String projectDeliveryMarket {get;set;}//项目交付市场
+        global String projectCustomerType {get;set;}//项目客户类型
     }
 }

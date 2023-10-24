@@ -24,7 +24,6 @@ public with sharing class TestMarketingDevelopment {
         rc.SealApplication__c = '否';
         rc.FileType__c = '';
         rc.AgreementIntroduction__c = '';
-        rc.ResourceArea__c = '';
         rc.AgreementName__c = '';
         rc.Approvalstatus__c = '11';
         rc.Process_Id__c = null ;
@@ -81,7 +80,6 @@ public with sharing class TestMarketingDevelopment {
         rc.Seal_Safekeep_Dept__c = '青海基地';
         rc.FileType__c = '';
         rc.AgreementIntroduction__c = '';
-        rc.ResourceArea__c = '';
         rc.AgreementName__c = '';
         rc.Approvalstatus__c = '11';
         rc.Process_Id__c = null ;

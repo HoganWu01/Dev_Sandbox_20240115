@@ -21,24 +21,24 @@ trigger ProjectapplicationTrigger on Projectapplication__c(before insert, before
         .execute();
 
         ProjectapplicationTriggerHandler proAppHandler = new ProjectapplicationTriggerHandler();
-        if (Trigger.isBefore) {
-            if (Trigger.isUpdate) {
-                //每次更新立项，都重新配置大区总经理和大客户总经理
-                List<Projectapplication__c> appUpdateList = new List<Projectapplication__c>();
-                for (Projectapplication__c app : (List<Projectapplication__c>)Trigger.new) {
-                    appUpdateList.add(app);
-                    // if (app.Salesdepartment__c!=null && app?.Manager_Secondary_Company__c==null) {
-                    //     appUpdateList.add(app);
-                    // }
-                    // if (app.MarketBidDept__c!=null && app?.General_Manager__c==null) {
-                    //     appUpdateList.add(app);
-                    // }
-                }
-                if (appUpdateList.size()>0) {
-                    proAppHandler.autoSetValueTrigger(appUpdateList);
-                }
-            }
-        }
+        // if (Trigger.isBefore) {
+        //     if (Trigger.isUpdate) {
+        //         //每次更新立项，都重新配置大区总经理和大客户总经理
+        //         List<Projectapplication__c> appUpdateList = new List<Projectapplication__c>();
+        //         for (Projectapplication__c app : (List<Projectapplication__c>)Trigger.new) {
+        //             appUpdateList.add(app);
+        //             // if (app.Salesdepartment__c!=null && app?.Manager_Secondary_Company__c==null) {
+        //             //     appUpdateList.add(app);
+        //             // }
+        //             // if (app.MarketBidDept__c!=null && app?.General_Manager__c==null) {
+        //             //     appUpdateList.add(app);
+        //             // }
+        //         }
+        //         if (appUpdateList.size()>0) {
+        //             proAppHandler.autoSetValueTrigger(appUpdateList);
+        //         }
+        //     }
+        // }
         if (Trigger.isAfter) {
             if (Trigger.isUpdate) {
                 List<Projectapplication__c> schemeUpdateList = new List<Projectapplication__c>();

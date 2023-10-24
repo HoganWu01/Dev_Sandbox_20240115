@@ -26,21 +26,13 @@ public with sharing class Test_Opportunity {
         User user2 = new User(Alias = '格日图222', Email='standarduser222@testorg.com',EmailEncodingKey='UTF-8', LastName='Test120', LanguageLocaleKey='en_US', LocaleSidKey='en_US', ProfileId = manageprofile.Id,  TimeZoneSidKey='America/Los_Angeles', UserName='standarduser@test120.com');
         insert user2;
 
-         //员工数据
-         Employee__c emp = new Employee__c(Job_Number__c = '123456', name = 'aaa', Duty__c = '顾问', Department__c = '小卖部', Department_Number__c = '111', Status__c = '在职');
-         insert emp ; 
+        //员工数据
+        Employee__c emp = new Employee__c(Job_Number__c = '123456', name = 'aaa', Duty__c = '顾问', Department__c = '小卖部', Department_Number__c = '111', Status__c = '在职');
+        insert emp ; 
 
-        //添加客户分部记录
-        MarketBidDept__c mb1 = new MarketBidDept__c(Name = '客户一部', General_Manager_User__c = user1.Id, General_Manager_Emp__c = emp.Id, DeptPickList__c = '162092f16daa04f4de53a694724b93ac', DeptId__c = '162092f16daa04f4de53a694724b93ac');
-        insert mb1;
-        MarketBidDept__c mb2 = new MarketBidDept__c(Name = '客户二部', General_Manager_User__c = user2.Id, General_Manager_Emp__c = emp.Id, DeptPickList__c = '162092f16e0f16e08b24fb54940ac5c7', DeptId__c = '162092f16e0f16e08b24fb54940ac5c7');
-        insert mb2;
-
-        //添加大区、售前项目经理记录
-        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user1.Id, Pre_Sales_Project_Manager__c = user1.Id, General_Manager_Company__c = emp.Id);
-        insert mid1;
-        Integrated_Middle_Table__c mid2 = new Integrated_Middle_Table__c(Salesdepartment__c = '东北大区', RecordTypeId = '0122u0000008V2DAAU', OppChiefgeneralmanager__c = user2.Id, Pre_Sales_Project_Manager__c = user2.Id, General_Manager_Company__c = emp.Id);
-        insert mid2;
+        String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
+        BasicData__c bd = new BasicData__c(RecordTypeId = recTypeId1, name = 'aaa', ProjectArea__c = 'SR101', BasicNo__c = 'A001');
+        insert bd;
 
         Opportunity opp  = new Opportunity();
         opp.Name = 'opp';
@@ -56,14 +48,12 @@ public with sharing class Test_Opportunity {
         opp.Periods__c = '一';
         opp.Close__c = false;
         opp.recordTypeId = '0122u0000008UxEAAU';
-        opp.Salesdepartment__c = '西南大区';
-        opp.MarketBidDept__c = '162092f16daa04f4de53a694724b93ac';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         opp.OwnerId = user1.Id;
         opp.OpportunityApprovalStatus__c = '草稿';
         insert opp;
-
-        
-
     }
 
     /**
@@ -136,16 +126,7 @@ public with sharing class Test_Opportunity {
 
         recordType imtRecordType = [SELECT Id,DeveloperName ,Sobjecttype FROM recordType WHERE sobjecttype = 'Integrated_Middle_Table__c' AND DeveloperName = 'OppSubCompany_RecordType'];
 
-		Integrated_Middle_Table__c i = new Integrated_Middle_Table__c();
-		i.RecordTypeId = imtRecordType.id;
-        i.OppChiefgeneralmanager__c = user1.id;
-        i.Pre_Sales_Project_Manager__c = user1.id;
-        i.Salesdepartment__c = '东北大区';
-        insert i  ;
-
-
         recordType imtRecordType1 = [SELECT Id,DeveloperName ,Sobjecttype FROM recordType WHERE sobjecttype = 'Integrated_Middle_Table__c' AND DeveloperName = 'ProjectType_RecordType'];
-
 
         Integrated_Middle_Table__c i2 = new Integrated_Middle_Table__c();
 		i2.RecordTypeId = imtRecordType1.id;
@@ -169,15 +150,13 @@ public with sharing class Test_Opportunity {
         opp.Choose__c = true;
         opp.Approvaltime__c = System.today();
         opp.Date__c = System.today();
-        opp.MarketBidDept__c = '999999';
+        opp.MarketBidDept__c = 'KA101';
         opp.OpportunityApprovalStatus__c = '线索转化通过';
         update opp;
 
         Projectapplication__c pac = new Projectapplication__c();
         pac.Oppty__c = opp.id ; 
         pac.Approvalstatus__c  = '30';
-        pac.MarketBidDept__c = '162092f16daa04f4de53a694724b93ac';
-        pac.Salesdepartment__c = '西南大区';
         insert pac ; 
 
         Profile ppp = [SELECT Id FROM Profile WHERE Name='系统管理员'];
@@ -197,12 +176,14 @@ public with sharing class Test_Opportunity {
         insert pro ; 
 
         opp.StageName = '中标/赢单';
-        opp.Salesdepartment__c = '东北大区';
-        opp.MarketBidDept__c = '162092f16e0f16e08b24fb54940ac5c7';
+        opp.ProjectArea__c = 'SR102';
+        opp.MarketBidDept__c = 'KA102';
 
         User user = new User(Alias = '颜芳', Email='yanfang@testorg.com',EmailEncodingKey='UTF-8', LastName='Test110', LanguageLocaleKey='en_US', LocaleSidKey='en_US', ProfileId = manageprofile.Id,  TimeZoneSidKey='America/Los_Angeles', UserName='yanfang@test110.com');
         insert user;
         
+        opp.Chiefgeneralmanager__c = user.Id;
+
         opp.OwnerId = user.Id;
         update opp;
 

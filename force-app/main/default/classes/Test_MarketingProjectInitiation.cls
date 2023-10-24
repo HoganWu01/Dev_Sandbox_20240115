@@ -36,15 +36,6 @@ public with sharing class Test_MarketingProjectInitiation {
         Employee__c emp = new Employee__c(Job_Number__c = '123456', name = 'aaa', Duty__c = '顾问', Department__c = '小卖部', Department_Number__c = '111', Status__c = '在职');
         insert emp ; 
 
-        //初始化集成中间表-总经理
-        String recTypeIddd = Schema.SObjectType.Integrated_Middle_Table__c.getRecordTypeInfosByDeveloperName().get('OppSubCompany_RecordType').getRecordTypeId();
-        Integrated_Middle_Table__c mid1 = new Integrated_Middle_Table__c(Salesdepartment__c = '西南大区', RecordTypeId = recTypeIddd, General_Manager_Company__c = emp.Id, Pre_Sales_Project_Manager__c = user1.Id);
-        insert mid1;
-
-        //初始客户分部总经理
-        MarketBidDept__c md = new MarketBidDept__c(DeptPickList__c = '999999', DeptId__c = '999999', General_Manager_Emp__c = emp.Id);
-        insert md;
-
         Opportunity opp = new Opportunity();
         opp.name = 'opp';
         opp.StageName = '线索管理' ;
@@ -52,7 +43,18 @@ public with sharing class Test_MarketingProjectInitiation {
         opp.Periods__c = '一八';
         opp.capacity__c = 12;
         opp.OpportunityApprovalStatus__c = '线索转化通过';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
         insert opp;
+
+        String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
+        BasicData__c bd = new BasicData__c(RecordTypeId = recTypeId1, name = 'aaa', ProjectArea__c = 'SR101', BasicNo__c = 'A001');
+        insert bd;
+
+        String recTypeId2 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Customer').getRecordTypeId();
+        BasicData__c bd2 = new BasicData__c(RecordTypeId = recTypeId2, name = 'bbb', MarketBidDept__c = 'KA101', BasicNo__c = 'B001');
+        insert bd2;
 
         Projectapplication__c pc = new Projectapplication__c();
         pc.Oppty__c = opp.Id;
@@ -72,8 +74,8 @@ public with sharing class Test_MarketingProjectInitiation {
         pc.Group__c = acc.id ; 
         pc.Stage__c = '';
         pc.Evalutionrulekey__c='机型选比重要性';
-        pc.Salesdepartment__c = '西南大区';
-        pc.MarketBidDept__c = '999999';
+        pc.ProjectArea__c = 'SR101';
+        pc.MarketBidDept__c = 'KA101';
         pc.Stage__c = '项目核准';
         pc.Tendermethod__c = '普通招标';
         pc.MW__c = '100';

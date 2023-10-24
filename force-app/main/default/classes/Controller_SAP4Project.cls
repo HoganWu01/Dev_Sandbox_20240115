@@ -254,7 +254,8 @@ global without sharing class Controller_SAP4Project {
 
                     if(!String.isBlank(rd.pspid)){
                         RequestBody3 reqB = new RequestBody3();  
-                        reqB.i_posid = rd.pspid + '-0000.A1' ;     //WBS
+                        // reqB.i_posid = rd.pspid + '-0000.A1' ;     //WBS
+                        reqB.i_posid = rd.pspid; //WBS
                         reqB.i_status2 = 'REL' ; //设置系统状态
                         r.setEndpoint(open.IP__c + ext2.Request_URL__c);
                         r.setBody(JSON.serialize(reqB));
@@ -263,10 +264,26 @@ global without sharing class Controller_SAP4Project {
                             Interface_Log__c logInfo2 = new Interface_Log__c();
                             logInfo2.RequestURL__c = ext2.Request_URL__c;
                             logInfo2.RequestBody__c = JSON.serialize(reqB);
-                            logInfo2.ClassName__c = 'Controller_SAP4ProjectAdd';
+                            logInfo2.ClassName__c = 'SAP4SectionProjectAdd';
                             logInfo2.RespondBody__c = resp2.getBody();
                             logInfo2.IsSuccess__c = true; 
                             insert logInfo2;
+                        }
+
+                        RequestBody3 reqB2 = new RequestBody3();  
+                        reqB2.i_posid = opp.ProjectNumber__c + '-0000.A' ;     //WBS
+                        reqB2.i_status4 = '合同商务' ; //设置用户状态	
+                        r.setEndpoint(open.IP__c + ext2.Request_URL__c);
+                        r.setBody(JSON.serialize(reqB2));
+                        HTTPResponse resp3 = h.send(r);
+                        if(resp3.getStatusCode() == 200){
+                            Interface_Log__c logInfo3 = new Interface_Log__c();
+                            logInfo3.RequestURL__c = ext2.Request_URL__c;
+                            logInfo3.RequestBody__c = JSON.serialize(reqB);
+                            logInfo3.ClassName__c = 'SAP4SectionProjectAdd';
+                            logInfo3.RespondBody__c = resp2.getBody();
+                            logInfo3.IsSuccess__c = true; 
+                            insert logInfo3;
                         }
                     }
                 }
@@ -722,7 +739,8 @@ global without sharing class Controller_SAP4Project {
                    reqBody_s.i_posid = opp.ProjectNumber__c ;     //WBS
                    reqBody_s.i_status2 = 'REL' ; //设置系统状态
                }else if (opp.StageName == 'Closed Won') {
-                   
+                    reqBody_s.i_posid = opp.ProjectNumber__c ;     //WBS
+                    reqBody_s.i_status2 = 'REL' ; //设置系统状态
                }else {
                    // return;
                }

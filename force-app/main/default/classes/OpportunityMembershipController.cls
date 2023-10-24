@@ -4,7 +4,7 @@ public without sharing class OpportunityMembershipController {
    @AuraEnabled
     public static Map<String,Object> getOpportunityWithContactMembership(String accountId){
         System.debug('进来了oppid' + accountId);
-        List<Opportunity> opps = [Select Id, Name, OwnerId, Owner.Name, StageName, Salesdepartment__c, Group__r.name
+        List<Opportunity> opps = [Select Id, Name, OwnerId, Owner.Name, StageName, Group__r.name
                                   From Opportunity Where Id =: accountId];
     	System.debug('opps==== ' + opps);
     	if(opps.isEmpty()){

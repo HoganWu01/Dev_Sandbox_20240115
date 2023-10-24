@@ -65,8 +65,6 @@ public without sharing class Controller_PSAF {
 
             //查询商机的信息
             Opportunity opp = [SELECT   Id,
-                                        Salesdepartment__c, //所属大区/二级公司
-                                        // Group__c, //项目所属集团
                                         Account.Id,//客户全称
                                         Province__c, //省份
                                         City__c, //城市
@@ -85,7 +83,6 @@ public without sharing class Controller_PSAF {
             Project_Scheme_Application_Form__c psaf = new Project_Scheme_Application_Form__c();
 
             if (opp != null) {
-                psaf.ProjectTheater__c  = opp.Salesdepartment__c;//项目所属战区
                 psaf.Group__c  = opp.Account.Id;//客户全称
                 psaf.Province__c  = opp.Province__c;//省份
                 psaf.City__c  = opp.City__c;//城市
