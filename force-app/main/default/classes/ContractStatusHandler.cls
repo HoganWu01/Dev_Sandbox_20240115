@@ -155,21 +155,21 @@ public without sharing class ContractStatusHandler implements Triggers.Handler{
 
             if (con.TaskStatus__c=='已完成') {
                 //更新合同商务的时间
-                if (con.ContractNegotiationStartDate__c==null) {
-                    con.ContractNegotiationStartDate__c = Datetime.now().date();
-                }
-                con.ContractSigningEndDate__c = Datetime.now().date();
-                updateContract.add(con);
+                // if (con.ContractNegotiationStartDate__c==null) {
+                //     con.ContractNegotiationStartDate__c = Datetime.now().date();
+                // }
+                // con.ContractSigningEndDate__c = Datetime.now().date();
+                // updateContract.add(con);
 
                  //更新项目任务的状态、时间
-                 if (pointTask!=null) {
+                 if (pointTask!=null&&con.ContractSigningEndDate__c!=null) {
                     if ( pointTask.PlannedStartDate__c==null) {
-                        pointTask.PlannedStartDate__c = Datetime.now().date();
+                        pointTask.PlannedStartDate__c = con.ContractSigningEndDate__c;
                     }
                     pointTask.Status__c = '已完成';
-                    pointTask.ActualEndDate__c = Datetime.now().date();
+                    pointTask.ActualEndDate__c = con.ContractSigningEndDate__c;
                     if(pointTask.ActualStartDate__c==null){
-                        pointTask.ActualStartDate__c = Datetime.now().date();
+                        pointTask.ActualStartDate__c = con.ContractSigningEndDate__c;
                     }
                 }
             }
@@ -234,7 +234,7 @@ public without sharing class ContractStatusHandler implements Triggers.Handler{
 
         if (oppId.size()>0) {
             oppList = [select id,ContractSignedCompany__c from Opportunity where id in: oppId] ;
-            proList = [select id,Opportunity__c,Account__c,ProjectManager__c,Type__c from Project__c where Opportunity__c in:oppId ];
+            proList = [select id,Opportunity__c,Account__c,ProjectManager__c,toLabel(ProjectProductType__c) from Project__c where Contract__c in:SyncAccToOppByContractMap.keySet() ];
         }
 
         if (oppList.size()>0 &&conList.size()>0) {
@@ -247,8 +247,10 @@ public without sharing class ContractStatusHandler implements Triggers.Handler{
         System.debug('proList===>>>'+proList);
         System.debug('conList===>>>'+conList);
         if (proList.size()>0 &&conList.size()>0) {
-            proList[0].Account__c = conList[0].Company__c ; 
-            update proList ; 
+            Project__c upPro = new Project__c();
+            upPro.Id = proList[0].Id;
+            upPro.Account__c = conList[0].Company__c ; 
+            update upPro ; 
             System.debug('修改项目完成');
         }
 
@@ -269,7 +271,7 @@ public without sharing class ContractStatusHandler implements Triggers.Handler{
                             RoleName__c
                             FROM Integrated_Middle_Table__c 
                             WHERE RecordTypeId =:recTypeId  
-                            AND ProjectType__c = :proList[0].Type__c];
+                            AND ProjectType__c = :proList[0].ProjectProductType__c];
         }
 
         UserRole userrole = new UserRole();

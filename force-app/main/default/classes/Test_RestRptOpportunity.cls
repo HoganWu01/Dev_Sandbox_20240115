@@ -27,7 +27,7 @@ public with sharing class Test_RestRptOpportunity {
         Opportunity opp  = new Opportunity();
         opp.Name = 'opp';
         opp.ProjectSubmission__c = '正常提报线索';
-        opp.Projecttype__c = '陆上项目';
+        opp.ProjectProductType__c = '01';
         opp.AccountId = acc.Id;
         opp.Wind_Farm_Project_Name__c = '风场项目名';
         opp.capacity__c = 12;

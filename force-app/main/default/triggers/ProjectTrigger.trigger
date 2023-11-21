@@ -12,7 +12,7 @@ trigger ProjectTrigger on Project__c (after insert) {
                 Id project_id = project.Id;
                 String project_name = project.Name;
                 Decimal initial_num_of_machine = project.InitialNumOfMachine__c;
-                String project_type = project.Type__c;
+                String project_type = project.ProjectProductType__c;
                 String region = project.RegionNew__c;
     
                
@@ -42,7 +42,7 @@ trigger ProjectTrigger on Project__c (after insert) {
     
                 // get static resource (json file)
                 StaticResource staticResource = null;
-                if(project_type.equals('陆上')){
+                if(project_type.equals('01')){
                     staticResource = [SELECT Name, SystemModstamp,Body
                     FROM StaticResource
                     WHERE Name = 'LandTaskList'
@@ -91,9 +91,7 @@ trigger ProjectTrigger on Project__c (after insert) {
                         String task_type = (String)key_value.get('task_type');
                         String department = (String)key_value.get('department');
     
-                        // System.debug(project_type.equals('陆上'));
-                        // System.debug(department.equals('战区') + ' ' + department);
-                        if(project_type.equals('陆上') && department.equals('战区')){
+                        if(project_type.equals('01') && department.equals('战区')){
                             department = region;
                             // System.debug(department);
                         }

@@ -14,7 +14,7 @@ public with sharing class Test_PSAF {
         opp.StageName ='线索管理';
         opp.Wind_Farm_Project_Name__c = '风场项目名';
         opp.CloseDate = System.today();
-        opp.Projecttype__c = '陆上项目';
+        opp.ProjectProductType__c = '01';
         opp.Periods__c = '一';
         opp.capacity__c = 12;
         insert opp;

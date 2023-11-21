@@ -67,6 +67,10 @@ public with sharing class Test_MarketingContract {
         BasicData__c bd = new BasicData__c(RecordTypeId = recTypeId1, name = 'aaa', ProjectArea__c = 'SR101', BasicNo__c = 'A001');
         insert bd;
 
+        String recTypeId2 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Customer').getRecordTypeId();
+        BasicData__c bd2 = new BasicData__c(RecordTypeId = recTypeId2, name = 'bbb', MarketBidDept__c = 'KA101', BasicNo__c = 'B001');
+        insert bd2;
+
         Contractmanagement__c cm=new Contractmanagement__c();
         cm.Contractname__c='合同';
         cm.WBS__c='123';

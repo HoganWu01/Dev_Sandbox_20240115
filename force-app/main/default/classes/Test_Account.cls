@@ -14,6 +14,7 @@ public with sharing class Test_Account {
         acc.Name = '广州风机';
         acc.BeenGroup__c = true;
         acc.TopGroup__c = 'TG101';
+        acc.ParentId = null;
         insert acc;
 
         Account subAcc = new Account();

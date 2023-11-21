@@ -19,13 +19,13 @@ global without sharing class ControllerMarketingProjectInitiation {
                                         ,Bidmodel__c,County__c,Designerintentmodelreason__c,Designerintentmodel__c,Accountintentmodel__c,Plan__c,Approvedbatch__c
                                         ,Internalrateofreturnoncapital__c,Accountintentmodelreason__c,Stage__c,Name2__c,Name3__c,Name1__c,Pretime__c,Name__c,ProjectName__c
                                         ,Totalinvestmentinternalrateofreturn__c,Turbulence__c,Recommendedmodelreason__c,Evalutionrulekey__c,Secondarycompany__r.Name,Secondarycompany__c,Periods__c,Evalutionrulekeyinstruction__c
-                                        ,Oppty__c,Approval_Comments__c,Recommendedmodel__c,Communication__c,EPC_Bidding_Method__c,ProjectArea__c,Projectproblemandkey__c,Tendercompany__c,Tendercompany__r.Name,Tendermethod__c
+                                        ,Oppty__c,Approval_Comments__c,Recommendedmodel__c,Communication__c,EPC_Bidding_Method__c,ProjectArea__c,toLabel(ProjectArea__c) ProjectAreaLabel,Projectproblemandkey__c,Tendercompany__c,Tendercompany__r.Name,Tendermethod__c
                                         ,Approvalstatus__c,MW__c
                                         ,(SELECT Id,Powergeneration__c,Name,quotedprice__c,Economicrank__c FROM Application__r)
                                         ,(SELECT Id,Powergeneration__c,Is_Pre_Communicate__c,Advantage__c,Competitivemodel__c,Name,Pre_Com_Content__c FROM Application2__r)
                                         //###### Thu Jun 8 17:20:32 CST 2023
                                         ,XiangmuGongsi__c,ErjiGongsi__c,JituanGongsi__c,ProcessType__c,TargetCapacity__c
-                                        ,DesigningInstitute__c,GovernmentSide__c,ProjectType__c
+                                        ,DesigningInstitute__c,GovernmentSide__c,toLabel(Oppty__r.ProjectProductType__c)
                                         ,(SELECT Name,PersonPostXm__c,ZhichiXm__c,PersonTelXm__c,PersonSuqiuXm__c,PersonOtherXm__c FROM XmProjectApplication__r)
                                         ,(SELECT Name,PersonPostErji__c,ZhichiErji__c,PersonTelErji__c,PersonSuqiuErji__c,PersonOtherErji__c FROM ErjiProjectApplication__r)
                                         ,(SELECT Name,PersonPostJt__c,ZhichiJt__c,PersonTelJt__c,PersonSuqiuJt__c,PersonOtherJt__c FROM JituanProjectApplication__r)
@@ -393,7 +393,7 @@ global without sharing class ControllerMarketingProjectInitiation {
             reqBody.fd_text_fangan = proInit.EPC_Bidding_Method__c==null?'':proInit.EPC_Bidding_Method__c;//EPC方招标招标方式
             reqBody.fd_total_happen = totalHappen;//发电量(/h)
             reqBody.fd_total_in = String.valueOf(opp.capacity__c);//容量
-            reqBody.fd_war_zone = proInit.ProjectArea__c==null?'':proInit.ProjectArea__c;//所属大区/二级公司
+            reqBody.fd_war_zone = (String)proInit.get('ProjectAreaLabel');//所属大区/二级公司
             reqBody.fd_wenti_guanjian = proInit.Projectproblemandkey__c==null?'':proInit.Projectproblemandkey__c;//项目问题点及关键点
             reqBody.fd_xiangmu_gongsi = proInit.XiangmuGongsi__c==null?'':proInit.XiangmuGongsi__c;//项目公司
             reqBody.fd_zhao_company = proInit?.Tendercompany__c==null?'':proInit.Tendercompany__r.Name;//招标公司
@@ -404,7 +404,7 @@ global without sharing class ControllerMarketingProjectInitiation {
             reqBody.fd_sub_division = proInit.MarketBidDept__c==null?'':proInit.MarketBidDept__c;//项目所属客户分部
             reqBody.fd_sub_division_text = proInit2.MarketBidDept__c==null?'':proInit2.MarketBidDept__c;//项目所属客户分部
             reqBody.fd_project_member = proInit?.ProjectMember__c==null?'':proInit.ProjectMember__c; //项目组成员
-            reqBody.fd_project_type = proInit?.ProjectType__c==null?'':proInit.ProjectType__c;//项目类型
+            reqBody.fd_project_type = proInit?.Oppty__r.ProjectProductType__c==null?'':proInit.Oppty__r.ProjectProductType__c;//项目类型
 
             reqBody.fd_model_select = proInit?.ModelSelect__c==null?'':proInit.ModelSelect__c;//机型比选
             reqBody.fd_road_survey = proInit?.RoadSurvey__c==null?'':proInit.RoadSurvey__c;//路勘及路改

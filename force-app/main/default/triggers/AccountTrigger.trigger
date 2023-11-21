@@ -5,10 +5,11 @@
  * @LastEditors: Please set LastEditors
  * @LastEditTime: 2021-12-08 18:17:35
  */
-trigger AccountTrigger on Account (before update,after update,after insert ) {
+trigger AccountTrigger on Account (before insert,before update,after update,after insert ) {
     Trigger__mdt mc = Trigger__mdt.getInstance('AccountTrigger');
     if (mc == null || mc.IsActive__c) {
         new triggers()
+        .Bind(Triggers.Evt.BeforeInsert,new AccountHandler())
         .Bind(Triggers.Evt.BeforeUpdate,new AccountHandler())
         .Bind(Triggers.Evt.AfterUpdate,new AccountHandler())
         .Bind(Triggers.Evt.AfterInsert,new AccountHandler())

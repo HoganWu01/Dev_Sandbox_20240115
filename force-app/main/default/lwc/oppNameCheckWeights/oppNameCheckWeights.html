@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="商机名称查重" icon-name="standard:drafts">
+        <div style="height: 550px;">
+            <lightning-datatable
+                key-field="Id"
+                data={opps.data}
+                columns={columns}>
+            </lightning-datatable>
+        </div>
+    </lightning-card>
+</template>

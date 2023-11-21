@@ -5,7 +5,7 @@
 @isTest
 private class TestProjectTrigger {
     static testMethod void TestProjectTrigger(){
-        Account account = new Account(Name='zhw',Region__c='华南战区');
+        Account account = new Account(Name='zhw',Region__c='东北大区');
         insert account;
 
         Id account_id = [SELECT Id FROM Account WHERE Name = 'zhw'].Id;
@@ -16,11 +16,10 @@ private class TestProjectTrigger {
 
         Project__c project = new Project__c(
             Name='Test', 
-            Type__c='海上', 
             Account__c=account_id, 
             ProjectManager__c=user_id, 
             InitialNumOfMachine__c = 1,
-            RegionNew__c = '华南战区'
+            RegionNew__c = '东北大区'
             );
 
         insert project;

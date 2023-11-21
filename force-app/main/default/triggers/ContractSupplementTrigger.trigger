@@ -15,7 +15,7 @@ trigger ContractSupplementTrigger on ContractSupplement__c(before insert, before
 			List<ContractSupplement__c> conInsertList = new List<ContractSupplement__c>();
 			for (ContractSupplement__c con : (List<ContractSupplement__c>)Trigger.new) {
 				//战区不为空，区域代表为空或者分管副总裁为空
-				if (con.Country__c=='国内项目' && con.Salesdepartment__c!=null && (con.Regional_Vice_President__c==null||con.Chief_Representative__c==null)) {
+				if (con.Contractname__r.ObjectName__r.ProjectDeliveryMarket__c=='01' && con.Salesdepartment__c!=null && (con.Regional_Vice_President__c==null||con.Chief_Representative__c==null)) {
 					conInsertList.add(con);
 				}
 			}
@@ -30,7 +30,7 @@ trigger ContractSupplementTrigger on ContractSupplement__c(before insert, before
 			for (ContractSupplement__c con : (List<ContractSupplement__c>)Trigger.new) {
 				ContractSupplement__c old = (ContractSupplement__c) Trigger.oldMap.get(con.Id);
 				//战区不为空，区域代表为空或者分管副总裁为空
-				if (con.Country__c=='国内项目' && con.Salesdepartment__c!=null && (con.Regional_Vice_President__c==null||con.Chief_Representative__c==null)) {
+				if (con.Contractname__r.ObjectName__r.ProjectDeliveryMarket__c=='01' && con.Salesdepartment__c!=null && (con.Regional_Vice_President__c==null||con.Chief_Representative__c==null)) {
 					conUpdateList.add(con);
 				}
 				//审批状态修改并且审批状态为审批中

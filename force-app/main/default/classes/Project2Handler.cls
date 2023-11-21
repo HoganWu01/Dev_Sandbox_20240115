@@ -20,6 +20,29 @@ public without sharing class Project2Handler implements Triggers.Handler {
         //     }
         // }
 
+        if(Trigger.isBefore && Trigger.isInsert) {
+            //不允许手工创建国内外部项目判断
+            for(Project__c project : (List<Project__c>)Trigger.new) {
+                if (project.IsInternalOutsideProj__c == false && project.ProjectDeliveryMarket__c == '01' && project.ProjectCustomerType__c == '01') {
+                    project.addError('不允许手工创建国内外部项目!');
+                }
+            }
+        }
+
+        if (Trigger.isBefore && Trigger.isUpdate) {
+            //不允许手工创建国内外部项目判断
+            for(Project__c newPro : (List<Project__c>)Trigger.new) {
+                Project__c oldPro = (Project__c)Trigger.oldMap.get(newPro.Id);
+                if (
+                    (newPro.ProjectDeliveryMarket__c != oldPro.ProjectDeliveryMarket__c || newPro.ProjectCustomerType__c != oldPro.ProjectCustomerType__c)
+                    && (newPro.ProjectDeliveryMarket__c == '01' && newPro.ProjectCustomerType__c == '01')
+                ) {
+                    newPro.addError('不允许手工创建国内外部项目!');
+                }
+            }
+
+        }
+
         //插入之后变更所有人为PMO，默认为销售经理/合同专员
         if (Trigger.isAfter && Trigger.isInsert) {
             Set<Id> projectOwnerSet = new Set<Id>();
@@ -133,14 +156,14 @@ public without sharing class Project2Handler implements Triggers.Handler {
     }
 
     public void updateProjectOwner(Set<Id> projectOwnerSet){
-        List<Project__c> projectList = [SELECT Id,Type__c,OwnerId FROM Project__c WHERE Id IN: projectOwnerSet];
+        List<Project__c> projectList = [SELECT Id,ProjectProductType__c,OwnerId FROM Project__c WHERE Id IN: projectOwnerSet];
 
         for(Project__c pro : projectList) {
             User u = new User();
-            if(pro.Type__c == '陆上项目'){
+            if(pro.ProjectProductType__c == '01'){
                 u = [select id from User where name = '郑耿昭'] ; 
                 pro.OwnerId = u.Id;
-            } else if (pro.Type__c == '海上项目'){
+            } else if (pro.ProjectProductType__c == '02'){
                 u = [select id from User where name = '甘进力'] ;
                 pro.OwnerId = u.Id; 
             }else {

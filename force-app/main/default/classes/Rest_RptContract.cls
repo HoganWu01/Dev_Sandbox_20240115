@@ -21,7 +21,7 @@ global without sharing class Rest_RptContract {
             logInfo.RequestBody__c = rReq.requestBody.toString();
             // System.debug('logInfo.RequestBody__c===>'+logInfo.RequestBody__c);
             List<Contractmanagement__c> conList = [SELECT Id, ObjectName__c, CreatedDate, LastModifiedDate, ContractSigningEndDate__c, ObjectName__r.Account.Name, 
-            ObjectName__r.Account.Shortname__c, ObjectName__r.StageName, ObjectName__r.Projecttype__c, ObjectName__r.Province__c, 
+            ObjectName__r.Account.Shortname__c, ObjectName__r.StageName, toLabel(ObjectName__r.ProjectProductType__c), ObjectName__r.Province__c, 
             toLabel(ObjectName__r.ProjectArea__c), ObjectName__r.WinCapacity__c, toLabel(ObjectName__r.MarketBidDept__c), Objectname2__c, TaskStatus__c, 
             WBS__c, SectionCapacity__c, ContractCapacity__c, ObjectName__r.ProjectDeliveryMarket__c, ObjectName__r.ProjectCustomerType__c, ObjectName__r.Close__c, Company__r.Name
             FROM Contractmanagement__c WHERE ObjectName__c != ''];
@@ -36,7 +36,7 @@ global without sharing class Rest_RptContract {
                     oEnt.accountName = con.ObjectName__r.Account.Name==null?'':con.ObjectName__r.Account.Name;
                     oEnt.accountShortName = con.ObjectName__r.Account.Shortname__c==null?'':con.ObjectName__r.Account.Shortname__c;
                     oEnt.stageName = con.ObjectName__r.StageName==null?'':con.ObjectName__r.StageName;
-                    oEnt.projectType = con.ObjectName__r.Projecttype__c==null?'':con.ObjectName__r.Projecttype__c;
+                    oEnt.projectType = con.ObjectName__r.ProjectProductType__c==null?'':con.ObjectName__r.ProjectProductType__c;
                     oEnt.province = con.ObjectName__r.Province__c==null?'':con.ObjectName__r.Province__c;
                     oEnt.salesDepartment = con.ObjectName__r.ProjectArea__c==null?'':con.ObjectName__r.ProjectArea__c;
                     oEnt.marketBidDept = con.ObjectName__r.MarketBidDept__c==null?'':con.ObjectName__r.MarketBidDept__c;

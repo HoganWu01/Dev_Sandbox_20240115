@@ -24,7 +24,7 @@ global without sharing class Rest_BasicData {
                 Id, 
                 Name, 
                 IsActivity__c,
-                RecordType.Name, 
+                RecordType.DeveloperName, 
                 LastModifiedDate, 
                 BasicNo__c, 
                 ProjectDeliveryMarket__c, 
@@ -48,7 +48,7 @@ global without sharing class Rest_BasicData {
                     bEnt.sId = ba.Id;
                     bEnt.name = ba.Name;
                     bEnt.isActivity = ba.IsActivity__c;
-                    bEnt.recordTypeName = ba.RecordType.Name;
+                    bEnt.recordTypeName = ba.RecordType.DeveloperName;
                     bEnt.lastModifiedDate = ba.LastModifiedDate;
                     bEnt.basicNo = ba.BasicNo__c;
                     bEnt.projectDeliveryMarket = ba.ProjectDeliveryMarket__c;

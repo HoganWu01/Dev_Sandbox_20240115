@@ -21,7 +21,7 @@ global without sharing class Rest_RptOpportunity {
             logInfo.RequestBody__c = rReq.requestBody.toString();
             // System.debug('logInfo.RequestBody__c===>'+logInfo.RequestBody__c);
             List<Opportunity> oppList = [SELECT Id, OpportunityApprovalStatus__c, Account.Name, CreatedDate, LastModifiedDate, Account.Shortname__c, 
-            Name, StageName, CalibrationDate__c, Projecttype__c, Province__c, toLabel(ProjectArea__c), capacity__c, CalibResults__c, 
+            Name, StageName, CalibrationDate__c, toLabel(ProjectProductType__c), Province__c, toLabel(ProjectArea__c), capacity__c, CalibResults__c, 
             toLabel(MarketBidDept__c), ProjectNumber__c, WinCapacity__c, Approval__c, Estimated_Bidding_Time__c, Winningopponent__c, Close__c, CloseType__c, Owner.Name
                 FROM Opportunity];
 
@@ -34,7 +34,7 @@ global without sharing class Rest_RptOpportunity {
                     oEnt.accountName = opp.Account.Name==null?'':opp.Account.Name;
                     oEnt.accountShortName = opp.Account.Shortname__c==null?'':opp.Account.Shortname__c;
                     oEnt.stageName = opp.StageName==null?'':opp.StageName;
-                    oEnt.projectType = opp.Projecttype__c==null?'':opp.Projecttype__c;
+                    oEnt.projectType = opp.ProjectProductType__c==null?'':opp.ProjectProductType__c;
                     oEnt.province = opp.Province__c==null?'':opp.Province__c;
                     oEnt.salesDepartment = opp.ProjectArea__c==null?'':opp.ProjectArea__c;
                     oEnt.marketBidDept = opp.MarketBidDept__c==null?'':opp.MarketBidDept__c;

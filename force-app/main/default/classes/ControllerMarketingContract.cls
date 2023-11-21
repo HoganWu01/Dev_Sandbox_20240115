@@ -15,12 +15,14 @@ global without sharing class ControllerMarketingContract {
     global static String toCreateMarketingContract(Id recordId){
         Interface_Log__c logInfo = new Interface_Log__c();
         ContractSupplement__c contractSup = [SELECT Process_Id__c,Approval_Comments__c,SealApplication__c,Applicant_Num__c,ProtocolType__c,Owner_Department__c,
-                                            WBS__c,Project_Manager__c,Project_Manager__r.Job_Number__c,xiangmu__c,ProjectType__c,
+                                            WBS__c,Project_Manager__c,Project_Manager__r.Job_Number__c,xiangmu__c,toLabel(Contractname__r.ObjectName__r.ProjectProductType__c),
                                             Contractname__r.ObjectName__r.ProjectArea__c,Approvalstatus__c,
                                             AgreementIntroduction__c,Chief_Representative__c,Chief_Representative__r.Job_Number__c,
                                             AccountName__c,AccountName__r.Name,AccountName__r.AccountNumber,PaymentRatioSum__c,
-                                            Country__c,Business_Manager__c,Business_Manager__r.Job_Number__c, 
-                                            toLabel(Contractname__r.ObjectName__r.MarketBidDept__c),
+                                            Business_Manager__c,Business_Manager__r.Job_Number__c, 
+                                            Contractname__r.ObjectName__r.MarketBidDept__c,
+                                            Contractname__r.ObjectName__r.ProjectDeliveryMarket__c,
+                                            toLabel(Contractname__r.ObjectName__r.ProjectCustomerType__c),
                                             ContractCapacity__c,TaxRate__c,Amount__c,ContractQuantity__c,Price__c,Contractname__r.Process_Id__c,Other_Protocol_Types__c,Seal_Org__c,
                                             Seal_Safekeep_Dept__c,Contractname__r.ProcessTheme__c,PaymentMethod__c,PaymentMethodOther__c,
                                             (SELECT Id,Document_Category__c,Document_Name__c,Seal_Company__c,Seal_Type__c,Seal_Numble__c FROM Marketing_Contract_Seal__r),
@@ -30,7 +32,7 @@ global without sharing class ControllerMarketingContract {
                                             FROM ContractSupplement__c WHERE Id =: recordId];
         RequestBody reqBody = new RequestBody();
         String returnId = '';
-        if (contractSup.Marketing_Contract_Seal__r.size()==0&&contractSup.SealApplication__c=='是'&&(contractSup.Country__c=='国内非关联方'||contractSup.Country__c=='国内关联方')) {
+        if (contractSup.Marketing_Contract_Seal__r.size()==0&&contractSup.SealApplication__c=='是'&&contractSup.Contractname__r.ObjectName__r.ProjectDeliveryMarket__c=='01') {
             return 'NoSeal';
         }
         if (contractSup.ProtocolType__c.contains('支付条款变更') && contractSup.PaymentRatioSum__c!=100) {
@@ -40,13 +42,26 @@ global without sharing class ControllerMarketingContract {
         //获取大区总经理、售前项目经理、大客户总经理
         String recTypeId1 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Sales').getRecordTypeId();
         List<BasicData__c> basicSalesList = [SELECT Id,
+                                                    MainChargeEmp__r.Name,
                                                     MainChargeEmp__r.Job_Number__c,
                                                     toLabel(ProjectArea__c)
                                                     FROM BasicData__c 
                                                     WHERE RecordTypeId =:recTypeId1  
                                                     AND ProjectArea__c =:contractSup.Contractname__r.ObjectName__r.ProjectArea__c];
-        if(basicSalesList.size()==0){
+        String recTypeId2 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Customer').getRecordTypeId();
+        List<BasicData__c> basicCustList = [SELECT Id,BasicNo__c,
+                                                    MainChargeEmp__r.Job_Number__c
+                                                    FROM BasicData__c 
+                                                    WHERE RecordTypeId =:recTypeId2  
+                                                    AND MarketBidDept__c =:contractSup.Contractname__r.ObjectName__r.MarketBidDept__c];
+        if(basicSalesList.size()==0 || basicCustList.size()==0){
             return 'BasicDataIsNull';
+        }
+
+        //获取项目交付市场,客户分部
+        Contractmanagement__c contract = null;
+        if(contractSup.Contractname__c != null){
+            contract = [select id, toLabel(ObjectName__r.ProjectDeliveryMarket__c),toLabel(ObjectName__r.MarketBidDept__c) from Contractmanagement__c where id =: contractSup.Contractname__c];
         }
 
 
@@ -75,7 +90,7 @@ global without sharing class ControllerMarketingContract {
         External_System_Param__c ext = External_System_Param__c.getValues('oaMarketingContractAdd');
         //印章相关信息
         for (Seal_Related_Information__c sealRelInfo : contractSup.Marketing_Contract_Seal__r) {
-            if(contractSup.Country__c=='国内非关联方'||contractSup.Country__c=='国内关联方'){
+            if(contractSup.Contractname__r.ObjectName__r.ProjectDeliveryMarket__c=='01'){
                 // if (sealRelInfo.Document_Category__c!=null) {
                 //     fileCategory.add(sealRelInfo.Document_Category__c);
                 // }
@@ -173,21 +188,23 @@ global without sharing class ControllerMarketingContract {
             reqBody.fd_apply_seal = String.isBlank(contractSup.SealApplication__c)?'否':contractSup.SealApplication__c; //是否申请盖章
             reqBody.fd_applyer = contractSup.Applicant_Num__c; //申请人
             reqBody.fd_business_manager = contractSup?.Business_Manager__c==null?'':contractSup.Business_Manager__r.Job_Number__c; //商务经理
-            reqBody.fd_customer_type = contractSup.Country__c; //客户类型
+            // reqBody.fd_customer_type = contractSup.Country__c; //客户类型
             reqBody.fd_deal_type = contractSup.ProtocolType__c; //协议类型
             reqBody.fd_jingban_charge = contractSup.Owner_Department__c; //经办部门设置,示例值(1000106)
 
-            reqBody.fd_market_hd_name = contractSup.Contractname__r.ObjectName__r.MarketBidDept__c; //客户营销分部名称
-            // reqBody.fd_market_sub = contractSup?.CustomerMarketingDivision__c==null?'':contractSup.CustomerMarketingDivision__c; //客户营销分部id
+            if (contract!=null) {
+                reqBody.fd_market_hd_name = contract.ObjectName__r.MarketBidDept__c==null?'':contract.ObjectName__r.MarketBidDept__c; //客户营销分部名称
+            }
+            reqBody.fd_market_sub = basicCustList[0].BasicNo__c==null?'':basicCustList[0].BasicNo__c; //客户营销分部id
 
-            reqBody.fd_namezone_represent = basicSalesList[0].MainChargeEmp__r.Job_Number__c;//区域负责人名称 项目所属区域 自动带出
+            reqBody.fd_namezone_represent = basicSalesList[0].MainChargeEmp__r.Name;//区域负责人名称 项目所属区域 自动带出
             reqBody.fd_project_code = contractSup.WBS__c; //项目编码
             reqBody.fd_project_manager = contractSup?.Project_Manager__c==null?'':contractSup.Project_Manager__r.Job_Number__c; //项目经理,示例值(A02323)
             reqBody.fd_project_name = String.isBlank(contractSup.xiangmu__c)?'':contractSup.xiangmu__c; //项目名称
-            reqBody.fd_project_type = contractSup.ProjectType__c; //项目类型,可用值:陆上,海上,示例值(海上)
+            reqBody.fd_project_type = contractSup.Contractname__r.ObjectName__r.ProjectProductType__c; //项目类型,可用值:陆上,海上,示例值(海上)
             reqBody.fd_war_zone = basicSalesList[0].ProjectArea__c; //项目所属区域
             reqBody.fd_xieyi_text_description = contractSup.AgreementIntroduction__c==null?'':contractSup.AgreementIntroduction__c; //协议内容简介
-            // reqBody.fd_zone_represent = projectArea.AreaPersonId__c; //区域负责人ID 项目所属区域 自动带出
+            reqBody.fd_zone_represent = basicSalesList[0].MainChargeEmp__r.Job_Number__c; //区域负责人工号
             reqBody.fd_bg_capacity = String.valueOf(contractSup.ContractCapacity__c); //变更后合同容量, 协议类型为“机型或配置变更”时必填
             reqBody.fd_bg_customer_code = contractSup.AccountName__c==null?'':(contractSup.AccountName__r.AccountNumber==null?'':contractSup.AccountName__r.AccountNumber); //变更后客户编码, 协议类型为“主体变更”时必填
             reqBody.fd_bg_customer_name = contractSup.AccountName__c==null?'':contractSup.AccountName__r.Name; //变更后客户实际值, 协议类型为“主体变更”时必填,格式：客户编码
@@ -225,6 +242,12 @@ global without sharing class ControllerMarketingContract {
             reqBody.fd_seal_admin = sealAdmins;//印章保管员 conner
             reqBody.fd_subject_identity = fd_subject_identity;//其他方明细表.主体身份
 
+            if (contract!=null) {
+                reqBody.fd_country_type = contract.ObjectName__r.ProjectDeliveryMarket__c==null?'':contract.ObjectName__r.ProjectDeliveryMarket__c;
+            }
+            reqBody.fd_cust_type = contractSup.Contractname__r.ObjectName__r.ProjectCustomerType__c==null?'':contractSup.Contractname__r.ObjectName__r.ProjectCustomerType__c;
+            reqBody.fd_customer_leader = basicCustList[0].MainChargeEmp__r.Job_Number__c==null?'':basicCustList[0].MainChargeEmp__r.Job_Number__c;
+            
             // reqBody.fd_file_name = String.isBlank(contractSup.International_Document_Name__c)?'':contractSup.International_Document_Name__c; //明阳国际文件名称(国际印章审批)
             // reqBody.fd_gaiz_desc = String.isBlank(contractSup.International_Seal_Description__c)?'':contractSup.International_Seal_Description__c; //盖章说明(国际印章审批)
             // //需知道这个字段对应了什么
@@ -252,7 +275,7 @@ global without sharing class ControllerMarketingContract {
                     }
 
                     //国内的印章审批，创建印章审批相关信息的父对象
-                    if (contractSup.SealApplication__c=='是'&&(contractSup.Country__c=='国内非关联方'||contractSup.Country__c=='国内关联方')&&contractSup.Process_Id__c==null) {
+                    if (contractSup.SealApplication__c=='是'&&contractSup.Contractname__r.ObjectName__r.ProjectDeliveryMarket__c=='01'&&contractSup.Process_Id__c==null) {
                         Seal_Approval__c sealApp = new Seal_Approval__c();
                         sealApp.Marketing_Contract__c = contractSup.Id;
                         sealApp.Seal_Org__c = contractSup.Seal_Org__c;//管理单位
@@ -283,7 +306,7 @@ global without sharing class ControllerMarketingContract {
                         middleForm.Final_Approval_Date__c = null;//最终审批通过日期
                         middleForm.Process_Id__c = resBody.data.fdId;//流程Id
                         middleForm.Approvalstatus__c = '20';//审批状态
-                        if (contractSup.Country__c=='国际客户') {
+                        if (contractSup.Contractname__r.ObjectName__r.ProjectDeliveryMarket__c=='02') {
                             middleForm.Is_International__c = true;//是否国际印章审批
                         }else {
                             middleForm.Is_International__c = false;
@@ -359,7 +382,7 @@ global without sharing class ControllerMarketingContract {
 
         public String fd_business_manager;//商务经理,示例值(A02323)
         public List<String> fd_company_name;//其他方明细表.公司全称
-        public String fd_customer_type;//客户类型,可用值:国内关联方,国内非关联方,国际客户
+        // public String fd_customer_type;//客户类型,可用值:国内关联方,国内非关联方,国际客户
         public String fd_deal_type;//协议类型(多值以;分割),可用值:主体变更,支付条款变更,机型或配置变更,其它,示例值(主体变更;支付条款变更)
 
         public String fd_jingban_charge;//所有人部门
@@ -383,6 +406,10 @@ global without sharing class ControllerMarketingContract {
         public String fd_war_zone;//项目所属区域 国别为“国内项目”且项目类型为“陆上”时必填
         public String fd_xieyi_text_description;//协议内容简介,示例值(合同主体变更：xxxx有限公司变更为ssss工程有限公司；)
         public String fd_zone_represent;//区域代表 国别为“国内项目”且项目类型为“陆上”时必填
+
+        public String fd_country_type;//项目交付市场 国内项目或者国际项目
+        public String fd_cust_type;//项目客户类型 内部项目或者外部项目
+        public String fd_customer_leader;//客户营销分部负责人工号
 
         // public String fd_country_in;//国别,可用值:国内项目,国际项目,示例值(国内项目)
         // // public List<String> fd_file_category;//文档类别

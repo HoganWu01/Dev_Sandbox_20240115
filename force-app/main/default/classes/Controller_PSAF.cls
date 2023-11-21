@@ -71,7 +71,6 @@ public without sharing class Controller_PSAF {
                                         County__c, //县区
                                         Wind_Farm_Project_Name__c, //风场项目名
                                         capacity__c, //容量（MW）
-                                        Projecttype__c, //项目类型
                                         Periods__c //期数
                                     FROM
                                         Opportunity
@@ -89,7 +88,6 @@ public without sharing class Controller_PSAF {
                 psaf.District__c  = opp.County__c;//县区
                 psaf.Windfarmprojectname__c  = opp.Wind_Farm_Project_Name__c;//风场项目名
                 psaf.Capacity__c  = opp.capacity__c;//容量
-                psaf.Projecttype__c  = opp.Projecttype__c;//项目类型
                 psaf.Period__c  = opp.Periods__c;//期数
             }
             //商机

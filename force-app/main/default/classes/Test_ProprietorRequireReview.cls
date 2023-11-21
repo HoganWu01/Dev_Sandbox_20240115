@@ -7,7 +7,6 @@ public with sharing class Test_ProprietorRequireReview {
         rc.Contractwarrantyperiod__c = '11';
         rc.Configurationcategory__c = '主配置';
         rc.Deliveryrequirements__c = '1';
-        rc.ProjectType__c = '陆上';
         rc.FinishDate__c = Date.today();
         insert rc ; 
 
@@ -36,15 +35,39 @@ public with sharing class Test_ProprietorRequireReview {
         open.URL__c = 'http://61.142.78.5:8011/admin/oauth/token';
         insert open;
 
+        Opportunity opp  = new Opportunity();
+        opp.Name = 'opp';
+        opp.ProjectSubmission__c = '正常提报线索';
+        opp.Wind_Farm_Project_Name__c = '风场项目名';
+        opp.StageName ='招投标';
+        opp.CloseDate = System.today();
+        opp.recordTypeId = '0122u0000008UxEAAU';
+        opp.MarketBidDept__c = 'KA101';
+        opp.ProjectArea__c = 'SR101';
+        opp.ProjectDeliveryMarket__c = '01';
+        opp.OpportunityApprovalStatus__c = '商机提报通过';
+        insert opp;
+
+        Contractmanagement__c cm=new Contractmanagement__c();
+        cm.Contractname__c='合同';
+        cm.WBS__c='123';
+        cm.Approvalstatus__c='10';
+        cm.ObjectName__c = opp.Id;
+        insert cm;
+
+        String recTypeId2 =Schema.SObjectType.BasicData__c.getRecordTypeInfosByDeveloperName().get('RecordType_BasicData_Customer').getRecordTypeId();
+        BasicData__c bd2 = new BasicData__c(RecordTypeId = recTypeId2, name = 'bbb', MarketBidDept__c = 'KA101', BasicNo__c = 'B001');
+        insert bd2;
+
         Requirementsreview__c rc = new Requirementsreview__c();
         // rc.Projectname__c = '11';
         rc.Contractwarrantyperiod__c = '11';
         rc.Configurationcategory__c = '主配置';
         rc.Deliveryrequirements__c = '1';
-        rc.ProjectType__c = '陆上';
         rc.FinishDate__c = Date.today();
-        rc.Country__c = '国内项目';
         rc.Contractmodel__c = '11';
+        rc.Opportunityname__c = opp.Id;
+        rc.Contractmanagement__c = cm.Id;
         insert rc ; 
 
         Demandconfiguration__c dc = new Demandconfiguration__c();

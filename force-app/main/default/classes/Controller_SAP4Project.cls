@@ -205,7 +205,7 @@ global without sharing class Controller_SAP4Project {
         try {
 
             logInfo.RequestURL__c = ext.Request_URL__c;
-            logInfo.ClassName__c = 'Controller_SAP4ProjectAdd';
+            logInfo.ClassName__c = 'SAP4SectionProjectAdd';
 
             if(String.isBlank(opp.Province__c)){
                 logInfo.RespondBody__c = '商机省份为空！！！';
@@ -261,29 +261,33 @@ global without sharing class Controller_SAP4Project {
                         r.setBody(JSON.serialize(reqB));
                         HTTPResponse resp2 = h.send(r);
                         if(resp2.getStatusCode() == 200){
-                            Interface_Log__c logInfo2 = new Interface_Log__c();
-                            logInfo2.RequestURL__c = ext2.Request_URL__c;
-                            logInfo2.RequestBody__c = JSON.serialize(reqB);
-                            logInfo2.ClassName__c = 'SAP4SectionProjectAdd';
-                            logInfo2.RespondBody__c = resp2.getBody();
-                            logInfo2.IsSuccess__c = true; 
-                            insert logInfo2;
-                        }
+                            RequestBody3 reqB2 = new RequestBody3();  
+                            reqB2.i_posid = opp.ProjectNumber__c + '-0000.A' ;     //WBS
+                            reqB2.i_status4 = '合同商务' ; //设置用户状态	
+                            r.setEndpoint(open.IP__c + ext2.Request_URL__c);
+                            r.setBody(JSON.serialize(reqB2));
+                            HTTP hhh = new HTTP();
+                            HTTPResponse resp3 = hhh.send(r);
+                            if(resp3.getStatusCode() == 200){
 
-                        RequestBody3 reqB2 = new RequestBody3();  
-                        reqB2.i_posid = opp.ProjectNumber__c + '-0000.A' ;     //WBS
-                        reqB2.i_status4 = '合同商务' ; //设置用户状态	
-                        r.setEndpoint(open.IP__c + ext2.Request_URL__c);
-                        r.setBody(JSON.serialize(reqB2));
-                        HTTPResponse resp3 = h.send(r);
-                        if(resp3.getStatusCode() == 200){
-                            Interface_Log__c logInfo3 = new Interface_Log__c();
-                            logInfo3.RequestURL__c = ext2.Request_URL__c;
-                            logInfo3.RequestBody__c = JSON.serialize(reqB);
-                            logInfo3.ClassName__c = 'SAP4SectionProjectAdd';
-                            logInfo3.RespondBody__c = resp2.getBody();
-                            logInfo3.IsSuccess__c = true; 
-                            insert logInfo3;
+                                //下达rel的日志
+                                Interface_Log__c logInfo2 = new Interface_Log__c();
+                                logInfo2.RequestURL__c = ext2.Request_URL__c;
+                                logInfo2.RequestBody__c = JSON.serialize(reqB);
+                                logInfo2.ClassName__c = 'SAP4SectionProjectAdd';
+                                logInfo2.RespondBody__c = resp2.getBody();
+                                logInfo2.IsSuccess__c = true; 
+                                insert logInfo2;
+
+                                //设置用户状态的日志
+                                Interface_Log__c logInfo3 = new Interface_Log__c();
+                                logInfo3.RequestURL__c = ext2.Request_URL__c;
+                                logInfo3.RequestBody__c = JSON.serialize(reqB2);
+                                logInfo3.ClassName__c = 'SAP4SectionProjectAdd';
+                                logInfo3.RespondBody__c = resp3.getBody();
+                                logInfo3.IsSuccess__c = true; 
+                                insert logInfo3;
+                            }
                         }
                     }
                 }

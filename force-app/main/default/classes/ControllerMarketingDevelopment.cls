@@ -12,7 +12,7 @@ global without sharing class ControllerMarketingDevelopment {
                                             Agreement_Handler__r.Job_Number__c,Agreement_Handler__c,Agreement_Handler__r.Department_Number__c,SealApplication__c,Approvalstatus__c
                                           ,(SELECT Id,Document_Category__c,Document_Name__c,Seal_Company__c,Seal_Type__c,Seal_Numble__c FROM Seal_Related_Information__r),
                                           Business_Type__c,Investment_Whether__c,ProjectInvestment__r.Process_Id__c,
-                                          Opportunity__r.Account.TopGroup__c,toLabel(Opportunity__r.ProjectArea__c)
+                                          toLabel(Opportunity__r.Account.TopGroup__c),toLabel(Opportunity__r.ProjectArea__c)
                                            FROM ResourceApproval__c WHERE Id =: recordId];
         RequestBody reqBody = new RequestBody();
         // List<String> fileCategory = new List<String>(); //文档类别
